@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 import 'pages/home.dart'; 
-void main() {
+
+SharedPreferences prefs;
+
+void main() async{
+  prefs = await SharedPreferences.getInstance();
+
   runApp(MyApp());
 }
 
