@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import '../main.dart';
 import './home.dart';
 
 class EditPage extends StatefulWidget {
-  int longBreak;
-  EditPage({this.longBreak});
   @override
   _EditPageState createState() => _EditPageState();
 }
@@ -19,6 +18,7 @@ class _EditPageState extends State<EditPage> {
   }
 
   _editPage() {
+    int pomodoro = prefs.getInt('pomodoro');
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -49,26 +49,29 @@ class _EditPageState extends State<EditPage> {
                       padding: EdgeInsets.all(20),
                       child: IconButton(
                         icon: Icon(Icons.remove),
-                        onPressed: () {
-                          setState(() {
-                            widget.longBreak--;
-                            MyHomePage();
+                        onPressed: () async{
+                          setState((){
+                            pomodoro--;
                           });
+                          await prefs.setInt('pomodoro', pomodoro);
+
                         },
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(20),
-                      child: Text('${widget.longBreak}'),
+                      child: Text('$pomodoro'),
                     ),
                     Padding(
                       padding: EdgeInsets.all(20),
                       child: IconButton(
                         icon: Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            widget.longBreak++;
+                        onPressed: () async{
+                          setState((){
+                            pomodoro++;
                           });
+                          await prefs.setInt('pomodoro', pomodoro);
+
                         },
                       ),
                     ),

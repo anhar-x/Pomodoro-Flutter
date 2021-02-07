@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audio_cache.dart';
 
+import '../main.dart';
 import './edit_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -17,22 +18,23 @@ class _MyHomePageState extends State<MyHomePage> {
   static const alarmAudioPath = "alarm_pomodoro.mp3";
 
   Timer _timer;
-  int longBreak = 10;
+  int pomodoro = prefs.getInt('pomodoro');
 
   void startTimer() {
+
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
       (Timer timer) {
-        if (longBreak == 0) {
+        if (pomodoro == 0) {
           player.play(alarmAudioPath);
           setState(() {
             timer.cancel();
-            longBreak = 10;
+            pomodoro = prefs.getInt('pomodoro');
           });
         } else {
           setState(() {
-            longBreak--;
+            pomodoro--;
           });
         }
       },
@@ -54,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: Icon(Icons.menu),
             onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => EditPage(longBreak: longBreak,)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => EditPage())).then((value) => setState(() {pomodoro = prefs.getInt('pomodoro');}));
             },
           ),
 
@@ -70,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Text('Start Pomodoro')
             ),
-            Text("$longBreak")
+            Text("$pomodoro")
           ],
         ),
       ),
