@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audio_cache.dart';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 
 import '../main.dart';
 import './edit_page.dart';
@@ -22,26 +24,40 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _isPomoDisabled = false;
 
-  void startTimer() {
-    const oneSec = const Duration(seconds: 1);
-    _isPomoDisabled = true;
-    _timer = new Timer.periodic(
-      oneSec,
-      (Timer timer) {
-        if (pomodoro == 0) {
-          player.play(alarmAudioPath);
-          setState(() {
-            timer.cancel();
-            _isPomoDisabled = false;
-            pomodoro = prefs.getInt('pomodoro');
-          });
-        } else {
-          setState(() {
-            pomodoro--;
-          });
-        }
-      },
-    );
+  CountDownController _controller = CountDownController();
+
+  // void startTimer() {
+  //   const oneSec = const Duration(seconds: 1);
+  //   _isPomoDisabled = true;
+  //   _timer = new Timer.periodic(
+  //     oneSec,
+  //     (Timer timer) {
+  //       if (pomodoro == 0) {
+  //         player.play(alarmAudioPath);
+  //         setState(() {
+  //           timer.cancel();
+  //           _isPomoDisabled = false;
+  //           pomodoro = prefs.getInt('pomodoro');
+  //         });
+  //       } else {
+  //         setState(() {
+  //           pomodoro--;
+  //         });
+  //       }
+  //     },
+  //   );
+  // }
+
+  _button({String title, VoidCallback onPressed}) {
+    return Expanded(
+        child: RaisedButton(
+      child: Text(
+        title,
+        style: TextStyle(color: Colors.white),
+      ),
+      onPressed: onPressed,
+      color: Colors.purple,
+    ));
   }
 
   @override
@@ -58,24 +74,105 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             icon: Icon(Icons.menu),
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => EditPage())).then((value) => setState(() {pomodoro = prefs.getInt('pomodoro');}));
+            onPressed: () {
+              Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => EditPage()))
+                  .then((value) => setState(() {
+                        pomodoro = prefs.getInt('pomodoro');
+                      }));
             },
           ),
-
         ],
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            RaisedButton(
-              onPressed: _isPomoDisabled ? null : startTimer,
-              child: Text( _isPomoDisabled ? 'Pomodoro running': 'Start Pomodoro')
-            ),
-            Text("$pomodoro")
-          ],
-        ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularCountDownTimer(
+                // Countdown duration in Seconds.
+                duration: pomodoro,
+
+                // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
+                controller: _controller,
+
+                // Width of the Countdown Widget.
+                width: MediaQuery.of(context).size.width / 2,
+
+                // Height of the Countdown Widget.
+                height: MediaQuery.of(context).size.height / 2,
+
+                // Ring Color for Countdown Widget.
+                color: Colors.grey[300],
+
+                // Filling Color for Countdown Widget.
+                fillColor: Colors.purpleAccent[100],
+
+                // Background Color for Countdown Widget.
+                backgroundColor: Colors.purple[500],
+
+                // Border Thickness of the Countdown Ring.
+                strokeWidth: 20.0,
+
+                // Begin and end contours with a flat edge and no extension.
+                strokeCap: StrokeCap.round,
+
+                // Text Style for Countdown Text.
+                textStyle: TextStyle(
+                    fontSize: 33.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+
+                // Format for the Countdown Text.
+                textFormat: CountdownTextFormat.SS,
+
+                // Handles Countdown Timer (true for Reverse Countdown (max to 0), false for Forward Countdown (0 to max)).
+                isReverse: true,
+
+                // Handles Animation Direction (true for Reverse Animation, false for Forward Animation).
+                isReverseAnimation: true,
+
+                // Handles visibility of the Countdown Text.
+                isTimerTextShown: true,
+
+                // Handles the timer start.
+                autoStart: false,
+
+                // This Callback will execute when the Countdown Starts.
+                onStart: () {
+                  // Here, do whatever you want
+                  print('Countdown Started');
+                },
+
+                // This Callback will execute when the Countdown Ends.
+                onComplete: () {
+                  print('Countdown Ended');
+                  player.play(alarmAudioPath);
+                },
+              ),
+            ]),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 30,
+          ),
+          _button(title: "Start", onPressed: () => _controller.start()),
+          SizedBox(
+            width: 10,
+          ),
+          _button(title: "Pause", onPressed: () => _controller.pause()),
+          SizedBox(
+            width: 10,
+          ),
+          _button(title: "Resume", onPressed: () => _controller.resume()),
+          SizedBox(
+            width: 10,
+          ),
+          _button(
+              title: "Restart",
+              onPressed: () => _controller.restart(duration: pomodoro ))
+        ],
       ),
     );
   }

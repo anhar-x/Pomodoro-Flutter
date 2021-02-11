@@ -25,6 +25,8 @@ dependencies:
     sdk: flutter
   audioplayers: ^0.17.3
   shared_preferences: ^0.5.12+4
+  circular_countdown_timer: ^0.0.9
+
 
 
 
