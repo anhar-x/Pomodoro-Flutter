@@ -49,12 +49,19 @@ class _MyHomePageState extends State<MyHomePage> {
   // }
 
   _button({String title, VoidCallback onPressed}) {
+    var icon;
+    if(title == 'Start'){
+      icon = Icon(Icons.play_arrow);
+    }else if(title == 'Pause'){
+      icon = Icon(Icons.pause);
+    }else if(title == 'Resume'){
+      icon = Icon(Icons.refresh);
+    }else{
+      icon = Icon(Icons.replay);
+    }
     return Expanded(
-        child: RaisedButton(
-      child: Text(
-        title,
-        style: TextStyle(color: Colors.white),
-      ),
+        child: IconButton(
+      icon: icon,
       onPressed: onPressed,
       color: Colors.purple,
     ));
@@ -105,10 +112,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.grey[300],
 
                 // Filling Color for Countdown Widget.
-                fillColor: Colors.purpleAccent[100],
+                fillColor: Colors.blue[400],
 
                 // Background Color for Countdown Widget.
-                backgroundColor: Colors.purple[500],
+                backgroundColor: Colors.blue[500],
 
                 // Border Thickness of the Countdown Ring.
                 strokeWidth: 20.0,
@@ -171,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           _button(
               title: "Restart",
-              onPressed: () => _controller.restart(duration: pomodoro ))
+              onPressed: () => _controller.restart(duration: pomodoro))
         ],
       ),
     );
