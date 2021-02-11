@@ -20,9 +20,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer _timer;
   int pomodoro = prefs.getInt('pomodoro');
 
-  void startTimer() {
+  bool _isPomoDisabled = false;
 
+  void startTimer() {
     const oneSec = const Duration(seconds: 1);
+    _isPomoDisabled = true;
     _timer = new Timer.periodic(
       oneSec,
       (Timer timer) {
@@ -30,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
           player.play(alarmAudioPath);
           setState(() {
             timer.cancel();
+            _isPomoDisabled = false;
             pomodoro = prefs.getInt('pomodoro');
           });
         } else {
@@ -67,10 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             RaisedButton(
-              onPressed: (){
-                startTimer();
-              },
-              child: Text('Start Pomodoro')
+              onPressed: _isPomoDisabled ? null : startTimer,
+              child: Text( _isPomoDisabled ? 'Pomodoro running': 'Start Pomodoro')
             ),
             Text("$pomodoro")
           ],
