@@ -27,28 +27,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   CountDownController _controller = CountDownController();
 
-  // void startTimer() {
-  //   const oneSec = const Duration(seconds: 1);
-  //   _isPomoDisabled = true;
-  //   _timer = new Timer.periodic(
-  //     oneSec,
-  //     (Timer timer) {
-  //       if (pomodoro == 0) {
-  //         player.play(alarmAudioPath);
-  //         setState(() {
-  //           timer.cancel();
-  //           _isPomoDisabled = false;
-  //           pomodoro = prefs.getInt('pomodoro');
-  //         });
-  //       } else {
-  //         setState(() {
-  //           pomodoro--;
-  //         });
-  //       }
-  //     },
-  //   );
-  // }
-
   _button({String title, VoidCallback onPressed}) {
     var icon;
     if (title == 'Start') {
@@ -173,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   _controller.start();
                   _isPlayDisabled = true;
                 }
-                if(_isPaused){
+                if (_isPaused) {
                   _controller.resume();
                   _isPaused = false;
                 }
@@ -181,10 +159,12 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(
             width: 10,
           ),
-          _button(title: "Pause", onPressed: (){
-            _controller.pause();
-            _isPaused = true;
-          }),
+          _button(
+              title: "Pause",
+              onPressed: () {
+                _controller.pause();
+                _isPaused = true;
+              }),
           SizedBox(
             width: 10,
           ),
