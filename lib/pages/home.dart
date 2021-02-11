@@ -22,7 +22,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer _timer;
   int pomodoro = prefs.getInt('pomodoro');
 
-  bool _isPomoDisabled = false;
+  bool _isPlayDisabled = false;
+  bool _isPaused = false;
 
   CountDownController _controller = CountDownController();
 
@@ -50,13 +51,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _button({String title, VoidCallback onPressed}) {
     var icon;
-    if(title == 'Start'){
+    if (title == 'Start') {
       icon = Icon(Icons.play_arrow);
-    }else if(title == 'Pause'){
+    } else if (title == 'Pause') {
       icon = Icon(Icons.pause);
-    }else if(title == 'Resume'){
+    } else if (title == 'Resume') {
       icon = Icon(Icons.refresh);
-    }else{
+    } else {
       icon = Icon(Icons.replay);
     }
     return Expanded(
@@ -97,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               CircularCountDownTimer(
                 // Countdown duration in Seconds.
-                duration: pomodoro*60,
+                duration: pomodoro,
 
                 // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
                 controller: _controller,
@@ -154,6 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onComplete: () {
                   print('Countdown Ended');
                   player.play(alarmAudioPath);
+                  _isPlayDisabled = false;
                 },
               ),
             ]),
@@ -164,21 +166,31 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(
             width: 30,
           ),
-          _button(title: "Start", onPressed: () => _controller.start()),
+          _button(
+              title: "Start",
+              onPressed: () {
+                if (!_isPlayDisabled) {
+                  _controller.start();
+                  _isPlayDisabled = true;
+                }
+                if(_isPaused){
+                  _controller.resume();
+                  _isPaused = false;
+                }
+              }),
           SizedBox(
             width: 10,
           ),
-          _button(title: "Pause", onPressed: () => _controller.pause()),
-          SizedBox(
-            width: 10,
-          ),
-          _button(title: "Resume", onPressed: () => _controller.resume()),
+          _button(title: "Pause", onPressed: (){
+            _controller.pause();
+            _isPaused = true;
+          }),
           SizedBox(
             width: 10,
           ),
           _button(
               title: "Restart",
-              onPressed: () => _controller.restart(duration: pomodoro*60))
+              onPressed: () => _controller.restart(duration: pomodoro))
         ],
       ),
     );
