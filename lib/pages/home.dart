@@ -44,6 +44,12 @@ class _MyHomePageState extends State<MyHomePage> {
     ));
   }
 
+  _restart() {
+    _controller.restart(duration: pomodoro);
+    _controller.pause();
+    _isPaused = true;
+  }
+
   @override
   void dispose() {
     _timer.cancel();
@@ -131,9 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onComplete: () {
                   print('Countdown Ended');
                   player.play(alarmAudioPath);
-                  _controller.restart();
-                  _controller.pause();
-                  _isPaused = true;
+                  _restart();
                   _isPlayDisabled = false;
                 },
               ),
@@ -170,12 +174,9 @@ class _MyHomePageState extends State<MyHomePage> {
             width: 10,
           ),
           _button(
-              title: "Restart",
-              onPressed: () {
-                _controller.restart(duration: pomodoro);
-                _controller.pause();
-                _isPaused = true;
-              }),
+            title: "Restart",
+            onPressed: () => _restart(),
+          )
         ],
       ),
     );
