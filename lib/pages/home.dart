@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               CircularCountDownTimer(
                 // Countdown duration in Seconds.
-                duration: pomodoro,
+                duration: pomodoro*60,
 
                 // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
                 controller: _controller,
@@ -130,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     fontWeight: FontWeight.bold),
 
                 // Format for the Countdown Text.
-                textFormat: CountdownTextFormat.SS,
+                textFormat: CountdownTextFormat.MM_SS,
 
                 // Handles Countdown Timer (true for Reverse Countdown (max to 0), false for Forward Countdown (0 to max)).
                 isReverse: true,
@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           _button(
               title: "Restart",
-              onPressed: () => _controller.restart(duration: pomodoro))
+              onPressed: () => _controller.restart(duration: pomodoro*60))
         ],
       ),
     );
