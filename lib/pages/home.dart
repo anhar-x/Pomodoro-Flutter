@@ -33,8 +33,6 @@ class _MyHomePageState extends State<MyHomePage> {
       icon = Icon(Icons.play_arrow);
     } else if (title == 'Pause') {
       icon = Icon(Icons.pause);
-    } else if (title == 'Resume') {
-      icon = Icon(Icons.refresh);
     } else {
       icon = Icon(Icons.replay);
     }
@@ -170,7 +168,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           _button(
               title: "Restart",
-              onPressed: () => _controller.restart(duration: pomodoro))
+              onPressed: () {
+                _controller.restart(duration: pomodoro);
+                _isPlayDisabled = true;
+
+              }),
         ],
       ),
     );
