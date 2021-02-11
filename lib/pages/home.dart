@@ -170,8 +170,8 @@ class _MyHomePageState extends State<MyHomePage> {
               title: "Restart",
               onPressed: () {
                 _controller.restart(duration: pomodoro);
-                _isPlayDisabled = true;
-
+                _controller.pause();
+                _isPaused = true;
               }),
         ],
       ),
