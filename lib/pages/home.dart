@@ -131,6 +131,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 onComplete: () {
                   print('Countdown Ended');
                   player.play(alarmAudioPath);
+                  _controller.restart();
+                  _controller.pause();
+                  _isPaused = true;
                   _isPlayDisabled = false;
                 },
               ),
