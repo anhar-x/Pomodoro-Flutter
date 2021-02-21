@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _restart() {
-    _controller.restart(duration: pomodoro);
+    _controller.restart(duration: pomodoro*60);
     _controller.pause();
     _isPaused = true;
   }
@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               CircularCountDownTimer(
                 // Countdown duration in Seconds.
-                duration: pomodoro,
+                duration: pomodoro * 60,
 
                 // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
                 controller: _controller,
