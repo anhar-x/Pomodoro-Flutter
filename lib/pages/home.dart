@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _restart() {
-    _controller.restart(duration: timerState == 1 ? pomodoro * 60 : shortBreak * 60);
+    _controller.restart(duration: timerState == 1 ? pomodoro : shortBreak);
     _controller.pause();
     _isPaused = true;
   }
@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
      return CircularCountDownTimer(
                 key: ValueKey(key),
                 // Countdown duration in Seconds.
-                duration: key == 1 ? pomodoro * 60 : shortBreak * 60,
+                duration: key == 1 ? pomodoro : shortBreak ,
 
                 // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
                 controller: _controller,
@@ -168,6 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Text(timerState == 1 ? 'pomodoro' : 'short break'),
               AnimatedSwitcher(
                 duration: const Duration(seconds: 1),
                 transitionBuilder: (Widget child, Animation<double> animation) => ScaleTransition(child: child, scale:animation),
