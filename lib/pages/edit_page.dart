@@ -18,6 +18,8 @@ class _EditPageState extends State<EditPage> {
   _editPage() {
     int pomodoro = prefs.getInt('pomodoro');
     int shortBreak = prefs.getInt('short_break');
+    int longBreak = prefs.getInt('long_break');
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -127,6 +129,63 @@ class _EditPageState extends State<EditPage> {
                           shortBreak++;
                         });
                         await prefs.setInt('short_break', shortBreak);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        //LONG BREAK
+        Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          color: Colors.pink,
+          child: Column(
+            children: [
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                color: Colors.pink[300],
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text('LONG BREAK \n DURATION',
+                      style: TextStyle(fontSize: 24)),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: () async {
+                        if (longBreak > 1) {
+                          setState(() {
+                            longBreak--;
+                          });
+                          await prefs.setInt('long_break', longBreak);
+                        }
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text('$longBreak'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () async {
+                        setState(() {
+                          longBreak++;
+                        });
+                        await prefs.setInt('long_break', longBreak);
                       },
                     ),
                   ),
