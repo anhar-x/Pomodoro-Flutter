@@ -7,7 +7,6 @@ class EditPage extends StatefulWidget {
 }
 
 class _EditPageState extends State<EditPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,12 +34,10 @@ class _EditPageState extends State<EditPage> {
                   color: Colors.pink[300],
                   child: Padding(
                     padding: EdgeInsets.all(10),
-                    child:Text(
-                    'POMODORO \n DURATION', 
-                    style: TextStyle(fontSize: 24)),
+                    child: Text('POMODORO \n DURATION',
+                        style: TextStyle(fontSize: 24)),
                   ),
                 ),
-                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -48,12 +45,13 @@ class _EditPageState extends State<EditPage> {
                       padding: EdgeInsets.all(20),
                       child: IconButton(
                         icon: Icon(Icons.remove),
-                        onPressed: () async{
-                          setState((){
-                            pomodoro--;
-                          });
-                          await prefs.setInt('pomodoro', pomodoro);
-
+                        onPressed: () async {
+                          if (pomodoro > 1) {
+                            setState(() {
+                              pomodoro--;
+                            });
+                            await prefs.setInt('pomodoro', pomodoro);
+                          }
                         },
                       ),
                     ),
@@ -65,12 +63,11 @@ class _EditPageState extends State<EditPage> {
                       padding: EdgeInsets.all(20),
                       child: IconButton(
                         icon: Icon(Icons.add),
-                        onPressed: () async{
-                          setState((){
+                        onPressed: () async {
+                          setState(() {
                             pomodoro++;
                           });
                           await prefs.setInt('pomodoro', pomodoro);
-
                         },
                       ),
                     ),
