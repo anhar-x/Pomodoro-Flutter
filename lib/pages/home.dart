@@ -21,11 +21,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Timer _timer;
   int pomodoro = prefs.getInt('pomodoro');
+  int shortBreak = prefs.getInt('short_break');
+
+  int timerState = 1;
 
   bool _isPlayDisabled = false;
   bool _isPaused = false;
 
   CountDownController _controller = CountDownController();
+  CircularCountDownTimer _animatedTimer;
 
   _button({String title, VoidCallback onPressed}) {
     var icon;
@@ -45,42 +49,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _restart() {
-    _controller.restart(duration: pomodoro*60);
+    _controller.restart(duration: timerState == 1 ? pomodoro * 60 : shortBreak * 60);
     _controller.pause();
     _isPaused = true;
   }
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => EditPage()))
-                  .then((value) => setState(() {
-                        pomodoro = prefs.getInt('pomodoro');
-                      }));
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              CircularCountDownTimer(
+  _buildTimerUI(int key){
+     return CircularCountDownTimer(
+                key: ValueKey(key),
                 // Countdown duration in Seconds.
-                duration: pomodoro * 60,
+                duration: key == 1 ? pomodoro * 60 : shortBreak * 60,
 
                 // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
                 controller: _controller,
@@ -139,9 +117,64 @@ class _MyHomePageState extends State<MyHomePage> {
                   player.play(alarmAudioPath);
                   _restart();
                   _isPlayDisabled = false;
+
+                  setState(() {
+                    timerState = timerState == 1 ? 0 : 1;
+                    _animatedTimer = _buildTimerUI(timerState);
+                  });
+
                 },
-              ),
+              );
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _animatedTimer = _buildTimerUI(timerState);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () {
+              Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => EditPage()))
+                  .then((value) => setState(() {
+                        pomodoro = prefs.getInt('pomodoro');
+                        shortBreak = prefs.getInt('short_break');
+                      }));
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: GestureDetector(
+          onPanUpdate: (details){
+            if(details.delta.dx < 0 || details.delta.dx > 0){
+              print('Swiped');
+              setState(() {
+                timerState = timerState == 1 ? 0 : 1;
+                _animatedTimer = _buildTimerUI(timerState);
+              });
+            }
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              AnimatedSwitcher(
+                duration: const Duration(seconds: 1),
+                transitionBuilder: (Widget child, Animation<double> animation) => ScaleTransition(child: child, scale:animation),
+                child:_animatedTimer,
+              ), 
             ]),
+        )
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.center,
