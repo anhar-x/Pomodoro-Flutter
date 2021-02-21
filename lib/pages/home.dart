@@ -168,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(timerState == 1 ? 'pomodoro' : 'short break'),
+              Text(timerState == 1 ? 'pomodoro' : 'short break', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               AnimatedSwitcher(
                 duration: const Duration(seconds: 1),
                 transitionBuilder: (Widget child, Animation<double> animation) => ScaleTransition(child: child, scale:animation),
