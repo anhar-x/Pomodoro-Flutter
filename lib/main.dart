@@ -13,6 +13,9 @@ void main() async{
   if(prefs.getInt('pomodoro') == null){
     await prefs.setInt('pomodoro', 10);
   }
+  if(prefs.getInt('short_break') == null){
+    await prefs.setInt('short_break', 5);
+  }
 }
 
 class MyApp extends StatelessWidget {

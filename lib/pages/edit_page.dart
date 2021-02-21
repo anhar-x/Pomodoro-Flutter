@@ -17,64 +17,124 @@ class _EditPageState extends State<EditPage> {
 
   _editPage() {
     int pomodoro = prefs.getInt('pomodoro');
+    int shortBreak = prefs.getInt('short_break');
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        //POMODORO
         Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            color: Colors.pink,
-            child: Column(
-              children: [
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  color: Colors.pink[300],
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text('POMODORO \n DURATION',
-                        style: TextStyle(fontSize: 24)),
-                  ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          color: Colors.pink,
+          child: Column(
+            children: [
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(20),
-                      child: IconButton(
-                        icon: Icon(Icons.remove),
-                        onPressed: () async {
-                          if (pomodoro > 1) {
-                            setState(() {
-                              pomodoro--;
-                            });
-                            await prefs.setInt('pomodoro', pomodoro);
-                          }
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text('$pomodoro'),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(20),
-                      child: IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: () async {
+                color: Colors.pink[300],
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text('POMODORO \n DURATION',
+                      style: TextStyle(fontSize: 24)),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: () async {
+                        if (pomodoro > 1) {
                           setState(() {
-                            pomodoro++;
+                            pomodoro--;
                           });
                           await prefs.setInt('pomodoro', pomodoro);
-                        },
-                      ),
+                        }
+                      },
                     ),
-                  ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text('$pomodoro'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () async {
+                        setState(() {
+                          pomodoro++;
+                        });
+                        await prefs.setInt('pomodoro', pomodoro);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        //SHORT BREAK
+        Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          color: Colors.pink,
+          child: Column(
+            children: [
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
-              ],
-            )),
+                color: Colors.pink[300],
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text('SHORT BREAK \n DURATION',
+                      style: TextStyle(fontSize: 24)),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: () async {
+                        if (shortBreak > 1) {
+                          setState(() {
+                            shortBreak--;
+                          });
+                          await prefs.setInt('short_break', shortBreak);
+                        }
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text('$shortBreak'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () async {
+                        setState(() {
+                          shortBreak++;
+                        });
+                        await prefs.setInt('short_break', shortBreak);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
