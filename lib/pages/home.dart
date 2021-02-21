@@ -20,8 +20,11 @@ class _MyHomePageState extends State<MyHomePage> {
   static const alarmAudioPath = "alarm_pomodoro.mp3";
 
   Timer _timer;
+
   int pomodoro = prefs.getInt('pomodoro');
   int shortBreak = prefs.getInt('short_break');
+  int longBreak = prefs.getInt('long_break');
+
 
   int timerState = 1;
 
@@ -49,16 +52,38 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _restart() {
-    _controller.restart(duration: timerState == 1 ? pomodoro : shortBreak);
+    _controller.restart(duration: _whichState());
     _controller.pause();
     _isPaused = true;
+  }
+
+  _whichState(){
+    if(timerState == 1){
+      return pomodoro;
+    }else if(timerState == 0){
+      return shortBreak;
+    }else if(timerState == -1){
+      return longBreak;
+    }
+  }
+
+  //this is BAD code
+  _stateName(){
+    if(timerState == 1){
+      return 'pomodoro';
+    }else if(timerState == 0){
+      return 'short break';
+    }else{
+      return 'long break';
+    }
   }
 
   _buildTimerUI(int key){
      return CircularCountDownTimer(
                 key: ValueKey(key),
                 // Countdown duration in Seconds.
-                duration: key == 1 ? pomodoro : shortBreak ,
+                // duration: key == 1 ? pomodoro : shortBreak ,
+                duration: _whichState(),
 
                 // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
                 controller: _controller,
@@ -109,6 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onStart: () {
                   // Here, do whatever you want
                   print('Countdown Started');
+
                 },
 
                 // This Callback will execute when the Countdown Ends.
@@ -149,6 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   .then((value) => setState(() {
                         pomodoro = prefs.getInt('pomodoro');
                         shortBreak = prefs.getInt('short_break');
+                        longBreak = prefs.getInt('long_break');
                       }));
             },
           ),
@@ -157,18 +184,25 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: GestureDetector(
           onPanUpdate: (details){
-            if(details.delta.dx < 0 || details.delta.dx > 0){
+            if(details.delta.dx < 1 || details.delta.dx > 1){
               print('Swiped');
               setState(() {
-                timerState = timerState == 1 ? 0 : 1;
+                if(timerState == 1){
+                  timerState = -1;
+                }else if(timerState == -1){
+                  timerState = 0;
+                }else if(timerState == 0){
+                  timerState = 1;
+                }
                 _animatedTimer = _buildTimerUI(timerState);
               });
+
             }
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(timerState == 1 ? 'pomodoro' : 'short break', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(_stateName(), style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               AnimatedSwitcher(
                 duration: const Duration(seconds: 1),
                 transitionBuilder: (Widget child, Animation<double> animation) => ScaleTransition(child: child, scale:animation),
