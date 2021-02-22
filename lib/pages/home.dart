@@ -25,7 +25,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int shortBreak = prefs.getInt('short_break');
   int longBreak = prefs.getInt('long_break');
 
-
   int timerState = 1;
 
   bool _isPlayDisabled = false;
@@ -57,100 +56,96 @@ class _MyHomePageState extends State<MyHomePage> {
     _isPaused = true;
   }
 
-  _whichState(){
-    if(timerState == 1){
+  _whichState() {
+    if (timerState == 1) {
       return pomodoro;
-    }else if(timerState == 0){
+    } else if (timerState == 0) {
       return shortBreak;
-    }else if(timerState == -1){
+    } else if (timerState == -1) {
       return longBreak;
     }
   }
 
   //this is BAD code
-  _stateName(){
-    if(timerState == 1){
+  _stateName() {
+    if (timerState == 1) {
       return 'pomodoro';
-    }else if(timerState == 0){
+    } else if (timerState == 0) {
       return 'short break';
-    }else{
+    } else {
       return 'long break';
     }
   }
 
-  _buildTimerUI(int key){
-     return CircularCountDownTimer(
-                key: ValueKey(key),
-                // Countdown duration in Seconds.
-                // duration: key == 1 ? pomodoro : shortBreak ,
-                duration: _whichState(),
+  _buildTimerUI(int key) {
+    return CircularCountDownTimer(
+      key: ValueKey(key),
+      // Countdown duration in Seconds.
+      // duration: key == 1 ? pomodoro : shortBreak ,
+      duration: _whichState(),
 
-                // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
-                controller: _controller,
+      // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
+      controller: _controller,
 
-                // Width of the Countdown Widget.
-                width: MediaQuery.of(context).size.width / 2,
+      // Width of the Countdown Widget.
+      width: MediaQuery.of(context).size.width / 2,
 
-                // Height of the Countdown Widget.
-                height: MediaQuery.of(context).size.height / 2,
+      // Height of the Countdown Widget.
+      height: MediaQuery.of(context).size.height / 2,
 
-                // Ring Color for Countdown Widget.
-                color: Colors.grey[300],
+      // Ring Color for Countdown Widget.
+      color: Colors.grey[300],
 
-                // Filling Color for Countdown Widget.
-                fillColor: Colors.blue[400],
+      // Filling Color for Countdown Widget.
+      fillColor: Colors.blue[400],
 
-                // Background Color for Countdown Widget.
-                backgroundColor: Colors.blue[500],
+      // Background Color for Countdown Widget.
+      backgroundColor: Colors.blue[500],
 
-                // Border Thickness of the Countdown Ring.
-                strokeWidth: 20.0,
+      // Border Thickness of the Countdown Ring.
+      strokeWidth: 20.0,
 
-                // Begin and end contours with a flat edge and no extension.
-                strokeCap: StrokeCap.round,
+      // Begin and end contours with a flat edge and no extension.
+      strokeCap: StrokeCap.round,
 
-                // Text Style for Countdown Text.
-                textStyle: TextStyle(
-                    fontSize: 33.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
+      // Text Style for Countdown Text.
+      textStyle: TextStyle(
+          fontSize: 33.0, color: Colors.white, fontWeight: FontWeight.bold),
 
-                // Format for the Countdown Text.
-                textFormat: CountdownTextFormat.MM_SS,
+      // Format for the Countdown Text.
+      textFormat: CountdownTextFormat.MM_SS,
 
-                // Handles Countdown Timer (true for Reverse Countdown (max to 0), false for Forward Countdown (0 to max)).
-                isReverse: true,
+      // Handles Countdown Timer (true for Reverse Countdown (max to 0), false for Forward Countdown (0 to max)).
+      isReverse: true,
 
-                // Handles Animation Direction (true for Reverse Animation, false for Forward Animation).
-                isReverseAnimation: true,
+      // Handles Animation Direction (true for Reverse Animation, false for Forward Animation).
+      isReverseAnimation: true,
 
-                // Handles visibility of the Countdown Text.
-                isTimerTextShown: true,
+      // Handles visibility of the Countdown Text.
+      isTimerTextShown: true,
 
-                // Handles the timer start.
-                autoStart: false,
+      // Handles the timer start.
+      autoStart: false,
 
-                // This Callback will execute when the Countdown Starts.
-                onStart: () {
-                  // Here, do whatever you want
-                  print('Countdown Started');
+      // This Callback will execute when the Countdown Starts.
+      onStart: () {
+        // Here, do whatever you want
+        print('Countdown Started');
+      },
 
-                },
+      // This Callback will execute when the Countdown Ends.
+      onComplete: () {
+        print('Countdown Ended');
+        player.play(alarmAudioPath);
+        _restart();
+        _isPlayDisabled = false;
 
-                // This Callback will execute when the Countdown Ends.
-                onComplete: () {
-                  print('Countdown Ended');
-                  player.play(alarmAudioPath);
-                  _restart();
-                  _isPlayDisabled = false;
-
-                  setState(() {
-                    timerState = timerState == 1 ? 0 : 1;
-                    _animatedTimer = _buildTimerUI(timerState);
-                  });
-
-                },
-              );
+        setState(() {
+          timerState = timerState == 1 ? 0 : 1;
+          _animatedTimer = _buildTimerUI(timerState);
+        });
+      },
+    );
   }
 
   @override
@@ -182,35 +177,37 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Center(
-        child: GestureDetector(
-          onPanUpdate: (details){
-            if(details.delta.dx < 1 || details.delta.dx > 1){
-              print('Swiped');
-              setState(() {
-                if(timerState == 1){
-                  timerState = -1;
-                }else if(timerState == -1){
-                  timerState = 0;
-                }else if(timerState == 0){
-                  timerState = 1;
-                }
-                _animatedTimer = _buildTimerUI(timerState);
-              });
-
-            }
-          },
-          child: Column(
+          child: GestureDetector(
+        onPanUpdate: (details) {
+          if (details.delta.dx < 1 || details.delta.dx > 1) {
+            print('Swiped');
+            setState(() {
+              if (timerState == 1) {
+                timerState = -1;
+              } else if (timerState == -1) {
+                timerState = 0;
+              } else if (timerState == 0) {
+                timerState = 1;
+              }
+              _animatedTimer = _buildTimerUI(timerState);
+              _isPlayDisabled = false;
+            });
+          }
+        },
+        child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(_stateName(), style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(_stateName(),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               AnimatedSwitcher(
                 duration: const Duration(seconds: 1),
-                transitionBuilder: (Widget child, Animation<double> animation) => ScaleTransition(child: child, scale:animation),
-                child:_animatedTimer,
-              ), 
+                transitionBuilder:
+                    (Widget child, Animation<double> animation) =>
+                        ScaleTransition(child: child, scale: animation),
+                child: _animatedTimer,
+              ),
             ]),
-        )
-      ),
+      )),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -220,6 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
           _button(
               title: "Start",
               onPressed: () {
+                print('this is pressed');
                 if (!_isPlayDisabled) {
                   _controller.start();
                   _isPlayDisabled = true;
