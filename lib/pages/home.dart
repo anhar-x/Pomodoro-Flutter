@@ -178,20 +178,31 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
           child: GestureDetector(
-        onPanUpdate: (details) {
-          if (details.delta.dx < 1 || details.delta.dx > 1) {
-            print('Swiped');
-            setState(() {
-              if (timerState == 1) {
-                timerState = -1;
-              } else if (timerState == -1) {
-                timerState = 0;
-              } else if (timerState == 0) {
-                timerState = 1;
-              }
-              _animatedTimer = _buildTimerUI(timerState);
-              _isPlayDisabled = false;
-            });
+        // onPanUpdate: (details) {
+        //   if (details.delta.dx < 1 || details.delta.dx > 1) {
+        //     print('Swiped');
+        //     setState(() {
+        //       if (timerState == 1) {
+        //         timerState = -1;
+        //       } else if (timerState == -1) {
+        //         timerState = 0;
+        //       } else if (timerState == 0) {
+        //         timerState = 1;
+        //       }
+        //       _animatedTimer = _buildTimerUI(timerState);
+        //       _isPlayDisabled = false;
+        //     });
+        //   }
+        // },
+        // Using the DragEndDetails allows us to only fire once per swipe.
+        onHorizontalDragEnd: (dragEndDetails) {
+          if (dragEndDetails.primaryVelocity < 0) {
+            // Page forwards
+            print('Move page forwards');
+            
+          } else if (dragEndDetails.primaryVelocity > 0) {
+            // Page backwards
+            print('Move page backwards');
           }
         },
         child: Column(
