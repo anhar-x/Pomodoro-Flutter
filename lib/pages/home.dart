@@ -17,7 +17,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   static AudioCache player = AudioCache();
-  static const alarmAudioPath = "alarm_pomodoro.mp3";
+  static const alarmAudioPath = "piece-of-cake.mp3";
 
   Timer _timer;
 
