@@ -15,7 +15,7 @@ class _EditPageState extends State<EditPage> {
     );
   }
 
-  _createUI({String name, int timerType, String prefsName}) {
+  _createTimeChooser({String name, int timerLen, String prefsName}) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -23,7 +23,7 @@ class _EditPageState extends State<EditPage> {
       color: Colors.blueGrey,
       child: Column(
         children: [
-          Text('$name \n DURATION', style: TextStyle(fontSize: 24)),
+          Text('$name', style: TextStyle(fontSize: 16)),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -32,18 +32,18 @@ class _EditPageState extends State<EditPage> {
                 child: IconButton(
                   icon: Icon(Icons.remove),
                   onPressed: () async {
-                    if (timerType > 1) {
+                    if (timerLen > 1) {
                       setState(() {
-                        timerType--;
+                        timerLen--;
                       });
-                      await prefs.setInt('$prefsName', timerType);
+                      await prefs.setInt('$prefsName', timerLen);
                     }
                   },
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(20),
-                child: Text('$timerType'),
+                padding: EdgeInsets.all(5),
+                child: Text('$timerLen', style: TextStyle(fontSize: 26)),
               ),
               Padding(
                 padding: EdgeInsets.all(20),
@@ -51,9 +51,9 @@ class _EditPageState extends State<EditPage> {
                   icon: Icon(Icons.add),
                   onPressed: () async {
                     setState(() {
-                      timerType++;
+                      timerLen++;
                     });
-                    await prefs.setInt('$prefsName', timerType);
+                    await prefs.setInt('$prefsName', timerLen);
                   },
                 ),
               ),
@@ -68,13 +68,14 @@ class _EditPageState extends State<EditPage> {
     int pomodoro = prefs.getInt('pomodoro');
     int shortBreak = prefs.getInt('short_break');
     int longBreak = prefs.getInt('long_break');
+    int untilLongBreak = prefs.getInt('until_long_break');
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _createUI(name: 'POMODORO', timerType: pomodoro, prefsName: 'pomodoro'),
-        _createUI(name: 'SHORT BREAK', timerType: shortBreak, prefsName: 'short_break'),
-        _createUI(name: 'LONG BREAK', timerType: longBreak, prefsName: 'long_break'),
+        _createTimeChooser(name: 'POMODORO \n DURATION', timerLen: pomodoro, prefsName: 'pomodoro'),
+        _createTimeChooser(name: 'SHORT BREAK \n DURATION', timerLen: shortBreak, prefsName: 'short_break'),
+        _createTimeChooser(name: 'LONG BREAK \n DURATION', timerLen: longBreak, prefsName: 'long_break'),
+        _createTimeChooser(name: 'POMODOROS UNTIL \n LONG BREAK', timerLen: untilLongBreak, prefsName: 'until_long_break'),
       ],
     );
   }

@@ -24,6 +24,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int pomodoro = prefs.getInt('pomodoro');
   int shortBreak = prefs.getInt('short_break');
   int longBreak = prefs.getInt('long_break');
+  int untilLongBreak = prefs.getInt('until_long_break');
+
 
   /*
   timerState=1=pomodoro
@@ -186,6 +188,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         pomodoro = prefs.getInt('pomodoro');
                         shortBreak = prefs.getInt('short_break');
                         longBreak = prefs.getInt('long_break');
+                        untilLongBreak = prefs.getInt('until_long_break');
+
                       }));
             },
           ),
@@ -194,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
           child: GestureDetector(
         //SWIPE
-        // Using the DragEndDetails allows us to only fire once per swipe.
+        //Using the DragEndDetails allows us to only fire once per swipe.
         onHorizontalDragEnd: (dragEndDetails) {
           if (dragEndDetails.primaryVelocity < 0) {
             //forwards
