@@ -26,7 +26,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int longBreak = prefs.getInt('long_break');
   int untilLongBreak = prefs.getInt('until_long_break');
 
-
   /*
   timerState=1=pomodoro
   timerState=0=shortBreak
@@ -150,15 +149,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
         setState(() {
           // timerState = timerState == 1 ? 0 : 1;
+          if (untilLongBreak > 1) {
+            if(timerState == 1){
+              timerState = 0;
+              // untilLongBreak--;
+            }else{
+              timerState = 1;
+              untilLongBreak--;
 
-          if (timerState == 1) {
-            timerState = 0;
-          } else if (timerState == 0) {
+            }
+          }else {
             timerState = -1;
-          } else if (timerState == -1) {
-            timerState = 1;
+            untilLongBreak = prefs.getInt('until_long_break').toInt() + 1;
           }
-
+          print('TIMER STATE: ' + timerState.toString());
           _animatedTimer = _buildTimerUI(timerState);
         });
       },
@@ -189,7 +193,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         shortBreak = prefs.getInt('short_break');
                         longBreak = prefs.getInt('long_break');
                         untilLongBreak = prefs.getInt('until_long_break');
-
                       }));
             },
           ),
