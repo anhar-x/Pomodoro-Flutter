@@ -25,6 +25,11 @@ class _MyHomePageState extends State<MyHomePage> {
   int shortBreak = prefs.getInt('short_break');
   int longBreak = prefs.getInt('long_break');
 
+  /*
+  timerState=1=pomodoro
+  timerState=0=shortBreak
+  timerState=-1=longBreak
+  */
   int timerState = 1;
 
   bool _isPlayDisabled = false;
@@ -134,6 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
       },
 
       // This Callback will execute when the Countdown Ends.
+      //next timer is choosen and changed here
       onComplete: () {
         print('Countdown Ended');
         player.play(alarmAudioPath);
@@ -141,7 +147,16 @@ class _MyHomePageState extends State<MyHomePage> {
         _isPlayDisabled = false;
 
         setState(() {
-          timerState = timerState == 1 ? 0 : 1;
+          // timerState = timerState == 1 ? 0 : 1;
+
+          if (timerState == 1) {
+            timerState = 0;
+          } else if (timerState == 0) {
+            timerState = -1;
+          } else if (timerState == -1) {
+            timerState = 1;
+          }
+
           _animatedTimer = _buildTimerUI(timerState);
         });
       },
