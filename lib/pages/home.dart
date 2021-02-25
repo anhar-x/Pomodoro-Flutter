@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _isPlayDisabled = false;
   bool _isPaused = false;
+  Icon _startIcon = Icon(Icons.play_arrow);
 
   CountDownController _controller = CountDownController();
   CircularCountDownTimer _animatedTimer;
@@ -136,13 +137,11 @@ class _MyHomePageState extends State<MyHomePage> {
       // This Callback will execute when the Countdown Starts.
       onStart: () {
         // Here, do whatever you want
-        print('Countdown Started');
       },
 
       // This Callback will execute when the Countdown Ends.
       //next timer is choosen and changed here
       onComplete: () {
-        print('Countdown Ended');
         player.play(alarmAudioPath);
         _restart();
         _isPlayDisabled = false;
@@ -150,19 +149,17 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           // timerState = timerState == 1 ? 0 : 1;
           if (untilLongBreak > 1) {
-            if(timerState == 1){
+            if (timerState == 1) {
               timerState = 0;
               // untilLongBreak--;
-            }else{
+            } else {
               timerState = 1;
               untilLongBreak--;
-
             }
-          }else {
+          } else {
             timerState = -1;
             untilLongBreak = prefs.getInt('until_long_break').toInt() + 1;
           }
-          print('TIMER STATE: ' + timerState.toString());
           _animatedTimer = _buildTimerUI(timerState);
         });
       },
@@ -178,6 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     _animatedTimer = _buildTimerUI(timerState);
+    bool _startPressed = false;
 
     return Scaffold(
       appBar: AppBar(
@@ -253,31 +251,62 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(
             width: 30,
           ),
-          _button(
-              title: "Start",
+          // _button(
+          //     title: "Start",
+          //     onPressed: () {
+          //       print('this is pressed');
+          //       if (!_isPlayDisabled) {
+          //         _controller.start();
+          //         _isPlayDisabled = true;
+          //       }
+          //       if (_isPaused) {
+          //         _controller.resume();
+          //         _isPaused = false;
+          //       }
+          //     }),
+          Expanded(
+            child: IconButton(
+              icon: _startIcon,
+              color: Colors.purple,
               onPressed: () {
-                print('this is pressed');
-                if (!_isPlayDisabled) {
+                print('startPressed' + _startPressed.toString());
+                if (!_isPlayDisabled && !_isPaused) {
                   _controller.start();
                   _isPlayDisabled = true;
-                }
-                if (_isPaused) {
+                  // _startPressed = true;
+                  setState(() {
+                    _startIcon = Icon(Icons.pause);
+                  });
+                } else if (_isPlayDisabled && !_isPaused) {
+                  print('OKAYYY BOYYSSS');
+                  _controller.pause();
+                  _isPaused = true;
+                  setState(() {
+                    _startIcon = Icon(Icons.play_arrow);
+                  });
+                  // _startPressed = false;
+                } else if (_isPaused) {
                   _controller.resume();
                   _isPaused = false;
+                  setState(() {
+                    _startIcon = Icon(Icons.pause);
+                  });
                 }
-              }),
+              },
+            ),
+          ),
           SizedBox(
             width: 10,
           ),
-          _button(
-              title: "Pause",
-              onPressed: () {
-                _controller.pause();
-                _isPaused = true;
-              }),
-          SizedBox(
-            width: 10,
-          ),
+          // _button(
+          //     title: "Pause",
+          //     onPressed: () {
+          //       _controller.pause();
+          //       _isPaused = true;
+          //     }),
+          // SizedBox(
+          //   width: 10,
+          // ),
           _button(
             title: "Restart",
             onPressed: () => _restart(),
