@@ -40,27 +40,31 @@ class _MyHomePageState extends State<MyHomePage> {
   CountDownController _controller = CountDownController();
   CircularCountDownTimer _animatedTimer;
 
-  _button({String title, VoidCallback onPressed}) {
-    var icon;
-    if (title == 'Start') {
-      icon = Icon(Icons.play_arrow);
-    } else if (title == 'Pause') {
-      icon = Icon(Icons.pause);
-    } else {
-      icon = Icon(Icons.replay);
-    }
-    return Expanded(
-        child: IconButton(
-      icon: icon,
-      onPressed: onPressed,
-      color: Colors.purple,
-    ));
-  }
+  // _button({String title, VoidCallback onPressed}) {
+  //   var icon;
+  //   if (title == 'Start') {
+  //     icon = Icon(Icons.play_arrow);
+  //   } else if (title == 'Pause') {
+  //     icon = Icon(Icons.pause);
+  //   } else {
+  //     icon = Icon(Icons.replay);
+  //   }
+  //   return Expanded(
+  //       child: IconButton(
+  //     icon: icon,
+  //     onPressed: onPressed,
+  //     color: Colors.purple,
+  //   ));
+  // }
 
   _restart() {
     _controller.restart(duration: _whichState());
     _controller.pause();
     _isPaused = true;
+    setState(() {
+      _startIcon = Icon(Icons.play_arrow);
+
+    });
   }
 
   _whichState() {
@@ -248,22 +252,6 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
-            width: 30,
-          ),
-          // _button(
-          //     title: "Start",
-          //     onPressed: () {
-          //       print('this is pressed');
-          //       if (!_isPlayDisabled) {
-          //         _controller.start();
-          //         _isPlayDisabled = true;
-          //       }
-          //       if (_isPaused) {
-          //         _controller.resume();
-          //         _isPaused = false;
-          //       }
-          //     }),
           Expanded(
             child: IconButton(
               icon: _startIcon,
@@ -295,22 +283,16 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
           ),
-          SizedBox(
-            width: 10,
+
+          Expanded(
+            child: IconButton(
+              icon: Icon(Icons.replay),
+              color: Colors.purple,
+              onPressed: () => _restart(),
+
+            ),
           ),
-          // _button(
-          //     title: "Pause",
-          //     onPressed: () {
-          //       _controller.pause();
-          //       _isPaused = true;
-          //     }),
-          // SizedBox(
-          //   width: 10,
-          // ),
-          _button(
-            title: "Restart",
-            onPressed: () => _restart(),
-          )
+
         ],
       ),
     );
