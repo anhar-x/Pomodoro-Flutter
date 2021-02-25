@@ -24,7 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int pomodoro = prefs.getInt('pomodoro');
   int shortBreak = prefs.getInt('short_break');
   int longBreak = prefs.getInt('long_break');
-  int untilLongBreak = prefs.getInt('until_long_break');
+  int untilLongBreak = prefs.getInt('until_long_break');//when this is zero, longBreak is played.
 
   /*
   timerState=1=pomodoro
@@ -33,41 +33,24 @@ class _MyHomePageState extends State<MyHomePage> {
   */
   int timerState = 1;
 
-  bool _isPlayDisabled = false;
-  bool _isPaused = false;
-  Icon _startIcon = Icon(Icons.play_arrow);
+  bool _isPlayDisabled = false;//true when the timer is running.
+  bool _isPaused = false;//true when the timer is paused.
+  Icon _startIcon = Icon(Icons.play_arrow);//this is changed depending on the state of the timer.
 
   CountDownController _controller = CountDownController();
   CircularCountDownTimer _animatedTimer;
 
-  // _button({String title, VoidCallback onPressed}) {
-  //   var icon;
-  //   if (title == 'Start') {
-  //     icon = Icon(Icons.play_arrow);
-  //   } else if (title == 'Pause') {
-  //     icon = Icon(Icons.pause);
-  //   } else {
-  //     icon = Icon(Icons.replay);
-  //   }
-  //   return Expanded(
-  //       child: IconButton(
-  //     icon: icon,
-  //     onPressed: onPressed,
-  //     color: Colors.purple,
-  //   ));
-  // }
-
   _restart() {
-    _controller.restart(duration: _whichState());
+    _controller.restart(duration: _stateDuration());
     _controller.pause();
     _isPaused = true;
     setState(() {
       _startIcon = Icon(Icons.play_arrow);
-
     });
   }
 
-  _whichState() {
+  //returns the duration of state for a given timerState.
+  _stateDuration() {
     if (timerState == 1) {
       return pomodoro;
     } else if (timerState == 0) {
@@ -77,7 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  //this is BAD code
+  //this is BAD code or is it?
+  //returns the name of the state for a given timerState.
   _stateName() {
     if (timerState == 1) {
       return 'pomodoro';
@@ -92,8 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return CircularCountDownTimer(
       key: ValueKey(key),
       // Countdown duration in Seconds.
-      // duration: key == 1 ? pomodoro : shortBreak ,
-      duration: _whichState(),
+      duration: _stateDuration(),
 
       // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
       controller: _controller,
@@ -151,11 +134,9 @@ class _MyHomePageState extends State<MyHomePage> {
         _isPlayDisabled = false;
 
         setState(() {
-          // timerState = timerState == 1 ? 0 : 1;
           if (untilLongBreak > 1) {
             if (timerState == 1) {
               timerState = 0;
-              // untilLongBreak--;
             } else {
               timerState = 1;
               untilLongBreak--;
@@ -179,7 +160,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     _animatedTimer = _buildTimerUI(timerState);
-    bool _startPressed = false;
 
     return Scaffold(
       appBar: AppBar(
@@ -203,7 +183,6 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
           child: GestureDetector(
         //SWIPE
-        //Using the DragEndDetails allows us to only fire once per swipe.
         onHorizontalDragEnd: (dragEndDetails) {
           if (dragEndDetails.primaryVelocity < 0) {
             //forwards
@@ -257,23 +236,24 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: _startIcon,
               color: Colors.purple,
               onPressed: () {
-                print('startPressed' + _startPressed.toString());
+                //START
                 if (!_isPlayDisabled && !_isPaused) {
                   _controller.start();
                   _isPlayDisabled = true;
-                  // _startPressed = true;
                   setState(() {
                     _startIcon = Icon(Icons.pause);
                   });
-                } else if (_isPlayDisabled && !_isPaused) {
-                  print('OKAYYY BOYYSSS');
+                }
+                //PAUSE 
+                else if (_isPlayDisabled && !_isPaused) {
                   _controller.pause();
                   _isPaused = true;
                   setState(() {
                     _startIcon = Icon(Icons.play_arrow);
                   });
-                  // _startPressed = false;
-                } else if (_isPaused) {
+                }
+                //RESUME 
+                else if (_isPaused) {
                   _controller.resume();
                   _isPaused = false;
                   setState(() {
@@ -289,7 +269,6 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(Icons.replay),
               color: Colors.purple,
               onPressed: () => _restart(),
-
             ),
           ),
 
