@@ -130,9 +130,6 @@ class _MyHomePageState extends State<MyHomePage> {
       //next timer is choosen and changed here
       onComplete: () {
         player.play(alarmAudioPath);
-        _restart();
-        _isPlayDisabled = false;
-
         setState(() {
           if (untilLongBreak > 1) {
             if (timerState == 1) {
@@ -146,8 +143,13 @@ class _MyHomePageState extends State<MyHomePage> {
             untilLongBreak = prefs.getInt('until_long_break').toInt() + 1;
           }
           _animatedTimer = _buildTimerUI(timerState);
+          _startIcon = Icon(Icons.play_arrow);
+
         });
+        _isPlayDisabled = false;
+        _isPaused = false;
       },
+
     );
   }
 
@@ -196,7 +198,6 @@ class _MyHomePageState extends State<MyHomePage> {
               }
 
               _animatedTimer = _buildTimerUI(timerState);
-              _isPlayDisabled = false;
             });
           } else if (dragEndDetails.primaryVelocity > 0) {
             //backwards
@@ -210,9 +211,11 @@ class _MyHomePageState extends State<MyHomePage> {
               }
 
               _animatedTimer = _buildTimerUI(timerState);
-              _isPlayDisabled = false;
             });
           }
+          _startIcon = Icon(Icons.play_arrow);
+          _isPlayDisabled = false;
+          _isPaused = false;
         },
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
