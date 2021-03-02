@@ -158,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _timer.cancel();
     super.dispose();
   }
-
+  
   @override
   Widget build(BuildContext context) {
     _animatedTimer = _buildTimerUI(timerState);
