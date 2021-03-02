@@ -24,7 +24,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int pomodoro = prefs.getInt('pomodoro');
   int shortBreak = prefs.getInt('short_break');
   int longBreak = prefs.getInt('long_break');
-  int untilLongBreak = prefs.getInt('until_long_break');//when this is zero, longBreak is played.
+  int untilLongBreak = prefs
+      .getInt('until_long_break'); //when this is zero, longBreak is played.
 
   /*
   timerState=1=pomodoro
@@ -33,9 +34,10 @@ class _MyHomePageState extends State<MyHomePage> {
   */
   int timerState = 1;
 
-  bool _isPlayDisabled = false;//true when the timer is running.
-  bool _isPaused = false;//true when the timer is paused.
-  Icon _startIcon = Icon(Icons.play_arrow);//this is changed depending on the state of the timer.
+  bool _isPlayDisabled = false; //true when the timer is running.
+  bool _isPaused = false; //true when the timer is paused.
+  Icon _startIcon = Icon(
+      Icons.play_arrow); //this is changed depending on the state of the timer.
 
   CountDownController _controller = CountDownController();
   CircularCountDownTimer _animatedTimer;
@@ -144,12 +146,10 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           _animatedTimer = _buildTimerUI(timerState);
           _startIcon = Icon(Icons.play_arrow);
-
         });
         _isPlayDisabled = false;
         _isPaused = false;
       },
-
     );
   }
 
@@ -173,12 +173,15 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               Navigator.push(context,
                       MaterialPageRoute(builder: (context) => EditPage()))
-                  .then((value) => setState(() {
-                        pomodoro = prefs.getInt('pomodoro');
-                        shortBreak = prefs.getInt('short_break');
-                        longBreak = prefs.getInt('long_break');
-                        untilLongBreak = prefs.getInt('until_long_break');
-                      }));
+                  .then((value) {
+                setState(() {
+                  pomodoro = prefs.getInt('pomodoro');
+                  shortBreak = prefs.getInt('short_break');
+                  longBreak = prefs.getInt('long_break');
+                  untilLongBreak = prefs.getInt('until_long_break');
+                });
+                _restart();//to update the timer with new values
+              });
             },
           ),
         ],
@@ -248,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     _startIcon = Icon(Icons.pause);
                   });
                 }
-                //PAUSE 
+                //PAUSE
                 else if (_isPlayDisabled && !_isPaused) {
                   _controller.pause();
                   _isPaused = true;
@@ -256,7 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     _startIcon = Icon(Icons.play_arrow);
                   });
                 }
-                //RESUME 
+                //RESUME
                 else if (_isPaused) {
                   _controller.resume();
                   _isPaused = false;
@@ -267,7 +270,6 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
           ),
-
           Expanded(
             child: IconButton(
               icon: Icon(Icons.replay),
@@ -275,7 +277,6 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () => _restart(),
             ),
           ),
-
         ],
       ),
     );
