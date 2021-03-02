@@ -91,10 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
       color: Colors.grey[300],
 
       // Filling Color for Countdown Widget.
-      fillColor: Colors.blue[400],
+      fillColor: Colors.blueGrey,
 
       // Background Color for Countdown Widget.
-      backgroundColor: Colors.blue[500],
+      backgroundColor: Colors.blueGrey[900],
 
       // Border Thickness of the Countdown Ring.
       strokeWidth: 20.0,
@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // Text Style for Countdown Text.
       textStyle: TextStyle(
-          fontSize: 33.0, color: Colors.white, fontWeight: FontWeight.bold),
+          fontSize: 36.0, color: Colors.white, fontWeight: FontWeight.bold),
 
       // Format for the Countdown Text.
       textFormat: CountdownTextFormat.MM_SS,
@@ -166,6 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: Colors.blueGrey[800],
         actions: [
           IconButton(
             icon: Icon(Icons.menu),
@@ -221,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(_stateName(),
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
               AnimatedSwitcher(
                 duration: const Duration(seconds: 1),
                 transitionBuilder:
@@ -237,7 +238,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: IconButton(
               icon: _startIcon,
-              color: Colors.purple,
+              color: Colors.blueGrey[900],
               onPressed: () {
                 //START
                 if (!_isPlayDisabled && !_isPaused) {
@@ -270,7 +271,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: IconButton(
               icon: Icon(Icons.replay),
-              color: Colors.purple,
+              color: Colors.blueGrey[900],
               onPressed: () => _restart(),
             ),
           ),
