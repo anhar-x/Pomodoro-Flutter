@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../main.dart';
 import './edit_page.dart';
@@ -16,6 +17,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
   static AudioCache player = AudioCache();
   static const alarmAudioPath = "piece-of-cake.mp3";
 
@@ -126,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // This Callback will execute when the Countdown Starts.
       onStart: () {
         // Here, do whatever you want
+        _showNotification();
       },
 
       // This Callback will execute when the Countdown Ends.
@@ -158,7 +162,39 @@ class _MyHomePageState extends State<MyHomePage> {
     _timer.cancel();
     super.dispose();
   }
-  
+
+  @override
+  void initState() {
+    super.initState();
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('pomodoro_icon');
+    var initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
+  }
+
+  Future _showNotification() async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.max, priority: Priority.high);
+    var platformChannelSpecifics = new NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      _stateName(),
+      _stateDuration().toString(),
+      platformChannelSpecifics,
+      payload: 'This is notification detail Text...',
+    );
+  }
+
+  Future onSelectNotification(String payload) async {
+   return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     _animatedTimer = _buildTimerUI(timerState);
@@ -180,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   longBreak = prefs.getInt('long_break');
                   untilLongBreak = prefs.getInt('until_long_break');
                 });
-                _restart();//to update the timer with new values
+                _restart(); //to update the timer with new values
               });
             },
           ),

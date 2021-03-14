@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 import 'pages/home.dart'; 
 
 SharedPreferences prefs;
 
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
+
   runApp(MyApp());
   if(prefs.getInt('pomodoro') == null){
     await prefs.setInt('pomodoro', 10);
