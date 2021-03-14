@@ -43,13 +43,15 @@ class _MyHomePageState extends State<MyHomePage> {
   CountDownController _controller = CountDownController();
   CircularCountDownTimer _animatedTimer;
 
-  _restart() {
+  _restart() async{
     _controller.restart(duration: _stateDuration());
     _controller.pause();
     _isPaused = true;
     setState(() {
       _startIcon = Icon(Icons.play_arrow);
     });
+    await flutterLocalNotificationsPlugin.cancelAll();
+
   }
 
   //returns the duration of state for a given timerState.
