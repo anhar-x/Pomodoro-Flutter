@@ -22,8 +22,6 @@ class _MyHomePageState extends State<MyHomePage> {
   static AudioCache player = AudioCache();
   static const alarmAudioPath = "piece-of-cake.mp3";
 
-  Timer _timer;
-
   int pomodoro = prefs.getInt('pomodoro');
   int shortBreak = prefs.getInt('short_break');
   int longBreak = prefs.getInt('long_break');
@@ -134,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // This Callback will execute when the Countdown Ends.
       //next timer is choosen and changed here
-      onComplete: () {
+      onComplete: () async{
         player.play(alarmAudioPath);
         setState(() {
           if (untilLongBreak > 1) {
@@ -153,14 +151,10 @@ class _MyHomePageState extends State<MyHomePage> {
         });
         _isPlayDisabled = false;
         _isPaused = false;
+        await flutterLocalNotificationsPlugin.cancelAll();
+
       },
     );
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
   }
 
   @override
@@ -185,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await flutterLocalNotificationsPlugin.show(
       0,
       _stateName(),
-      _stateDuration().toString(),
+      _stateName() + ' is running!',
       platformChannelSpecifics,
       payload: 'This is notification detail Text...',
     );
