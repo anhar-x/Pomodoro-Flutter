@@ -127,12 +127,11 @@ class _MyHomePageState extends State<MyHomePage> {
       // This Callback will execute when the Countdown Starts.
       onStart: () {
         // Here, do whatever you want
-        _showNotification();
       },
 
       // This Callback will execute when the Countdown Ends.
       //next timer is choosen and changed here
-      onComplete: () async{
+      onComplete: () async {
         player.play(alarmAudioPath);
         setState(() {
           if (untilLongBreak > 1) {
@@ -152,7 +151,6 @@ class _MyHomePageState extends State<MyHomePage> {
         _isPlayDisabled = false;
         _isPaused = false;
         await flutterLocalNotificationsPlugin.cancelAll();
-
       },
     );
   }
@@ -169,24 +167,30 @@ class _MyHomePageState extends State<MyHomePage> {
         onSelectNotification: onSelectNotification);
   }
 
-  Future _showNotification() async {
-    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.max, priority: Priority.high);
-    var platformChannelSpecifics = new NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-    );
+  Future<void> _showIndeterminateProgressNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'indeterminate progress channel',
+            'indeterminate progress channel',
+            'indeterminate progress channel description',
+            channelShowBadge: false,
+            importance: Importance.max,
+            priority: Priority.high,
+            onlyAlertOnce: true,
+            showProgress: true,
+            indeterminate: true);
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-      0,
-      _stateName(),
-      _stateName() + ' is running!',
-      platformChannelSpecifics,
-      payload: 'This is notification detail Text...',
-    );
+        0,
+        'Pomodoro',
+        _stateName() + ' is running!',
+        platformChannelSpecifics,
+        payload: 'item x');
   }
 
   Future onSelectNotification(String payload) async {
-   return 0;
+    return 0;
   }
 
   @override
@@ -272,7 +276,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: IconButton(
               icon: _startIcon,
               color: Colors.blueGrey[900],
-              onPressed: () {
+              onPressed: () async {
                 //START
                 if (!_isPlayDisabled && !_isPaused) {
                   _controller.start();
@@ -280,6 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     _startIcon = Icon(Icons.pause);
                   });
+                  _showIndeterminateProgressNotification();
                 }
                 //PAUSE
                 else if (_isPlayDisabled && !_isPaused) {
@@ -288,6 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     _startIcon = Icon(Icons.play_arrow);
                   });
+                  await flutterLocalNotificationsPlugin.cancelAll();
                 }
                 //RESUME
                 else if (_isPaused) {
@@ -296,6 +302,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     _startIcon = Icon(Icons.pause);
                   });
+                  _showIndeterminateProgressNotification();
                 }
               },
             ),
