@@ -169,26 +169,40 @@ class _MyHomePageState extends State<MyHomePage> {
         onSelectNotification: onSelectNotification);
   }
 
-  Future<void> _showIndeterminateProgressNotification() async {
+  // Future<void> _showIndeterminateProgressNotification() async {
+  //   const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  //       AndroidNotificationDetails(
+  //           'indeterminate progress channel',
+  //           'indeterminate progress channel',
+  //           'indeterminate progress channel description',
+  //           channelShowBadge: false,
+  //           importance: Importance.max,
+  //           priority: Priority.high,
+  //           onlyAlertOnce: true,
+  //           showProgress: true,
+  //           indeterminate: true);
+  //   const NotificationDetails platformChannelSpecifics =
+  //       NotificationDetails(android: androidPlatformChannelSpecifics);
+  //   await flutterLocalNotificationsPlugin.show(
+  //       0,
+  //       'Pomodoro',
+  //       _stateName() + ' is running!',
+  //       platformChannelSpecifics,
+  //       payload: 'item x');
+  // }
+
+  Future<void> _showOngoingNotification() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-            'indeterminate progress channel',
-            'indeterminate progress channel',
-            'indeterminate progress channel description',
-            channelShowBadge: false,
+            'Pomodoro', 'Pomodoro Timer', 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
-            onlyAlertOnce: true,
-            showProgress: true,
-            indeterminate: true);
+            ongoing: true,
+            autoCancel: false);
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0,
-        'Pomodoro',
-        _stateName() + ' is running!',
-        platformChannelSpecifics,
-        payload: 'item x');
+    await flutterLocalNotificationsPlugin.show(0, 'Pomodoro',
+        _stateName() + ' is running!', platformChannelSpecifics);
   }
 
   Future onSelectNotification(String payload) async {
@@ -286,7 +300,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     _startIcon = Icon(Icons.pause);
                   });
-                  _showIndeterminateProgressNotification();
+                  // _showIndeterminateProgressNotification();
+                  _showOngoingNotification();
                 }
                 //PAUSE
                 else if (_isPlayDisabled && !_isPaused) {
@@ -304,7 +319,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     _startIcon = Icon(Icons.pause);
                   });
-                  _showIndeterminateProgressNotification();
+                  // _showIndeterminateProgressNotification();
+                  _showOngoingNotification();
                 }
               },
             ),
