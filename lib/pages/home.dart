@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   CountDownController _controller = CountDownController();
   CircularCountDownTimer _animatedTimer;
 
-  _restart() async{
+  _restart() async {
     _controller.restart(duration: _stateDuration());
     _controller.pause();
     _isPaused = true;
@@ -51,7 +51,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _startIcon = Icon(Icons.play_arrow);
     });
     await flutterLocalNotificationsPlugin.cancelAll();
-
   }
 
   //returns the duration of state for a given timerState.
@@ -201,8 +200,8 @@ class _MyHomePageState extends State<MyHomePage> {
             autoCancel: false);
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(0, 'Pomodoro',
-        _stateName() + ' is running!', platformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Pomodoro', _stateName() + ' is running!', platformChannelSpecifics);
   }
 
   Future onSelectNotification(String payload) async {
@@ -240,37 +239,44 @@ class _MyHomePageState extends State<MyHomePage> {
           child: GestureDetector(
         //SWIPE
         onHorizontalDragEnd: (dragEndDetails) {
-          if (dragEndDetails.primaryVelocity < 0) {
-            //forwards
-            setState(() {
-              if (timerState == 1) {
-                timerState = -1;
-              } else if (timerState == -1) {
-                timerState = 0;
-              } else if (timerState == 0) {
-                timerState = 1;
-              }
+          if (!_isPlayDisabled || _isPaused) {
+            print('ITS WORKINGGGGGG');
+            if (dragEndDetails.primaryVelocity < 0) {
+              //forwards
+              setState(() {
+                if (timerState == 1) {
+                  timerState = -1;
+                } else if (timerState == -1) {
+                  timerState = 0;
+                } else if (timerState == 0) {
+                  timerState = 1;
+                }
 
-              _animatedTimer = _buildTimerUI(timerState);
-            });
-          } else if (dragEndDetails.primaryVelocity > 0) {
-            //backwards
-            setState(() {
-              if (timerState == 1) {
-                timerState = 0;
-              } else if (timerState == -1) {
-                timerState = 1;
-              } else if (timerState == 0) {
-                timerState = -1;
-              }
+                _animatedTimer = _buildTimerUI(timerState);
+              });
+            } else if (dragEndDetails.primaryVelocity > 0) {
+              //backwards
+              setState(() {
+                if (timerState == 1) {
+                  timerState = 0;
+                } else if (timerState == -1) {
+                  timerState = 1;
+                } else if (timerState == 0) {
+                  timerState = -1;
+                }
 
-              _animatedTimer = _buildTimerUI(timerState);
-            });
+                _animatedTimer = _buildTimerUI(timerState);
+              });
+            }
+            _startIcon = Icon(Icons.play_arrow);
+            _isPlayDisabled = false;
+            _isPaused = false;
+          }else{
+            print('DISABLEDDDDDDDD');
+            return;
           }
-          _startIcon = Icon(Icons.play_arrow);
-          _isPlayDisabled = false;
-          _isPaused = false;
         },
+
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
