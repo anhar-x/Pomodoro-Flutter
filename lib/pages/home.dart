@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
   CircularCountDownTimer _animatedTimer;
 
   _restart() async {
-    _controller.restart(duration: _stateDuration());
+    _controller.restart(duration: _stateDuration() * 60);
     _controller.pause();
     _isPaused = true;
     setState(() {
@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return CircularCountDownTimer(
       key: ValueKey(key),
       // Countdown duration in Seconds.
-      duration: _stateDuration(),
+      duration: _stateDuration() * 60,
 
       // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
       controller: _controller,
@@ -197,7 +197,8 @@ class _MyHomePageState extends State<MyHomePage> {
             importance: Importance.max,
             priority: Priority.high,
             ongoing: true,
-            autoCancel: false);
+            autoCancel: false,
+            );
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(

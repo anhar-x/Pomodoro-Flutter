@@ -73,9 +73,9 @@ class _EditPageState extends State<EditPage> {
     return Column(
       children: [
         _createTimeChooser(name: 'POMODORO \n DURATION', timerLen: pomodoro, prefsName: 'pomodoro'),
-        _createTimeChooser(name: 'SHORT BREAK \n DURATION', timerLen: shortBreak, prefsName: 'short_break'),
-        _createTimeChooser(name: 'LONG BREAK \n DURATION', timerLen: longBreak, prefsName: 'long_break'),
-        _createTimeChooser(name: 'POMODOROS UNTIL \n LONG BREAK', timerLen: untilLongBreak, prefsName: 'until_long_break'),
+        _createTimeChooser(name: 'SHORT BREAK \n  DURATION', timerLen: shortBreak, prefsName: 'short_break'),
+        _createTimeChooser(name: 'LONG BREAK \n  DURATION', timerLen: longBreak, prefsName: 'long_break'),
+        _createTimeChooser(name: 'POMODOROS UNTIL \n  LONG BREAK', timerLen: untilLongBreak, prefsName: 'until_long_break'),
       ],
     );
   }
