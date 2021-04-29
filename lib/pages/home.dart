@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../main.dart';
 import './edit_page.dart';
@@ -44,9 +45,11 @@ class _MyHomePageState extends State<MyHomePage> {
   CircularCountDownTimer _animatedTimer;
 
   _restart() async {
-    _controller.restart(duration: _stateDuration() * 60);
+    // _controller.restart(duration: _stateDuration() * 60);
+    _controller.restart(duration: _stateDuration());
     _controller.pause();
     _isPaused = true;
+    _isPlayDisabled = false;
     setState(() {
       _startIcon = Icon(Icons.play_arrow);
     });
@@ -80,7 +83,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return CircularCountDownTimer(
       key: ValueKey(key),
       // Countdown duration in Seconds.
-      duration: _stateDuration() * 60,
+      // duration: _stateDuration() * 60,
+      duration: _stateDuration(),
 
       // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
       controller: _controller,
@@ -128,6 +132,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // This Callback will execute when the Countdown Starts.
       onStart: () {
         // Here, do whatever you want
+        _isPaused = false;
+        _isPlayDisabled = true;
       },
 
       // This Callback will execute when the Countdown Ends.
@@ -193,12 +199,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _showOngoingNotification() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-            'Pomodoro', 'Pomodoro Timer', 'your channel description',
-            importance: Importance.max,
-            priority: Priority.high,
-            ongoing: true,
-            autoCancel: false,
-            );
+      'Pomodoro',
+      'Pomodoro Timer',
+      'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ongoing: true,
+      autoCancel: false,
+    );
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
@@ -221,17 +229,25 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: Icon(Icons.menu),
             onPressed: () {
-              Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => EditPage()))
-                  .then((value) {
-                setState(() {
-                  pomodoro = prefs.getInt('pomodoro');
-                  shortBreak = prefs.getInt('short_break');
-                  longBreak = prefs.getInt('long_break');
-                  untilLongBreak = prefs.getInt('until_long_break');
+              //Only go to the menu if the timer is NOT running.
+              if (!_isPlayDisabled) {
+                Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => EditPage()))
+                    .then((value) {
+                  setState(() {
+                    pomodoro = prefs.getInt('pomodoro');
+                    shortBreak = prefs.getInt('short_break');
+                    longBreak = prefs.getInt('long_break');
+                    untilLongBreak = prefs.getInt('until_long_break');
+                  });
+                  _restart(); //to update the timer with new values
                 });
-                _restart(); //to update the timer with new values
-              });
+              } else {
+                Fluttertoast.showToast(
+                    msg: "Timer is running!",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,);
+              }
             },
           ),
         ],
@@ -272,7 +288,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _startIcon = Icon(Icons.play_arrow);
             _isPlayDisabled = false;
             _isPaused = false;
-          }else{
+          } else {
             print('DISABLEDDDDDDDD');
             return;
           }
