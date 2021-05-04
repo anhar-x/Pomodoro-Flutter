@@ -124,13 +124,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _button({String title, VoidCallback onPressed}) {
     return Expanded(
-        child: RaisedButton(
+        child: ElevatedButton(
       child: Text(
         title,
         style: TextStyle(color: Colors.white),
       ),
       onPressed: onPressed,
-      color: Colors.purple,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.purple,
+      ),
     ));
   }
 }
