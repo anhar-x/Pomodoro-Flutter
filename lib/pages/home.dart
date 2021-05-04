@@ -222,92 +222,137 @@ class _MyHomePageState extends State<MyHomePage> {
     _animatedTimer = _buildTimerUI(timerState);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Colors.blueGrey[800],
-        actions: [
-          IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              //Only go to the menu if the timer is NOT running.
-              if (!_isPlayDisabled) {
-                Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => EditPage()))
-                    .then((value) {
-                  setState(() {
-                    pomodoro = prefs.getInt('pomodoro');
-                    shortBreak = prefs.getInt('short_break');
-                    longBreak = prefs.getInt('long_break');
-                    untilLongBreak = prefs.getInt('until_long_break');
-                  });
-                  _restart(); //to update the timer with new values
-                });
-              } else {
-                Fluttertoast.showToast(
-                    msg: "Timer is running!",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,);
-              }
-            },
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: Text(widget.title),
+      //   backgroundColor: Colors.blueGrey[800],
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(Icons.menu),
+      //       onPressed: () {
+      //         //Only go to the menu if the timer is NOT running.
+      //         if (!_isPlayDisabled) {
+      //           Navigator.push(context,
+      //                   MaterialPageRoute(builder: (context) => EditPage()))
+      //               .then((value) {
+      //             setState(() {
+      //               pomodoro = prefs.getInt('pomodoro');
+      //               shortBreak = prefs.getInt('short_break');
+      //               longBreak = prefs.getInt('long_break');
+      //               untilLongBreak = prefs.getInt('until_long_break');
+      //             });
+      //             _restart(); //to update the timer with new values
+      //           });
+      //         } else {
+      //           Fluttertoast.showToast(
+      //               msg: "Timer is running!",
+      //               toastLength: Toast.LENGTH_SHORT,
+      //               gravity: ToastGravity.BOTTOM,);
+      //         }
+      //       },
+      //     ),
+      //   ],
+      // ),
+
       body: Center(
-          child: GestureDetector(
-        //SWIPE
-        onHorizontalDragEnd: (dragEndDetails) {
-          if (!_isPlayDisabled || _isPaused) {
-            print('ITS WORKINGGGGGG');
-            if (dragEndDetails.primaryVelocity < 0) {
-              //forwards
-              setState(() {
-                if (timerState == 1) {
-                  timerState = -1;
-                } else if (timerState == -1) {
-                  timerState = 0;
-                } else if (timerState == 0) {
-                  timerState = 1;
-                }
+        child: GestureDetector(
+          //SWIPE
+          onHorizontalDragEnd: (dragEndDetails) {
+            if (!_isPlayDisabled || _isPaused) {
+              print('ITS WORKINGGGGGG');
+              if (dragEndDetails.primaryVelocity < 0) {
+                //forwards
+                setState(() {
+                  if (timerState == 1) {
+                    timerState = -1;
+                  } else if (timerState == -1) {
+                    timerState = 0;
+                  } else if (timerState == 0) {
+                    timerState = 1;
+                  }
 
-                _animatedTimer = _buildTimerUI(timerState);
-              });
-            } else if (dragEndDetails.primaryVelocity > 0) {
-              //backwards
-              setState(() {
-                if (timerState == 1) {
-                  timerState = 0;
-                } else if (timerState == -1) {
-                  timerState = 1;
-                } else if (timerState == 0) {
-                  timerState = -1;
-                }
+                  _animatedTimer = _buildTimerUI(timerState);
+                });
+              } else if (dragEndDetails.primaryVelocity > 0) {
+                //backwards
+                setState(() {
+                  if (timerState == 1) {
+                    timerState = 0;
+                  } else if (timerState == -1) {
+                    timerState = 1;
+                  } else if (timerState == 0) {
+                    timerState = -1;
+                  }
 
-                _animatedTimer = _buildTimerUI(timerState);
-              });
+                  _animatedTimer = _buildTimerUI(timerState);
+                });
+              }
+              _startIcon = Icon(Icons.play_arrow);
+              _isPlayDisabled = false;
+              _isPaused = false;
+            } else {
+              print('DISABLEDDDDDDDD');
+              return;
             }
-            _startIcon = Icon(Icons.play_arrow);
-            _isPlayDisabled = false;
-            _isPaused = false;
-          } else {
-            print('DISABLEDDDDDDDD');
-            return;
-          }
-        },
+          },
 
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(_stateName(),
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
-              AnimatedSwitcher(
-                duration: const Duration(seconds: 1),
-                transitionBuilder:
-                    (Widget child, Animation<double> animation) =>
-                        ScaleTransition(child: child, scale: animation),
-                child: _animatedTimer,
-              ),
-            ]),
-      )),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                //title and menu button
+                IntrinsicHeight(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(_stateName(),
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.w900)),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          icon: Icon(Icons.menu),
+                          onPressed: () {
+                            //Only go to the menu if the timer is NOT running.
+                            if (!_isPlayDisabled) {
+                              Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditPage()))
+                                  .then((value) {
+                                setState(() {
+                                  pomodoro = prefs.getInt('pomodoro');
+                                  shortBreak = prefs.getInt('short_break');
+                                  longBreak = prefs.getInt('long_break');
+                                  untilLongBreak =
+                                      prefs.getInt('until_long_break');
+                                });
+                                _restart(); //to update the timer with new values
+                              });
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: "Timer is running!",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                AnimatedSwitcher(
+                  duration: const Duration(seconds: 1),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) =>
+                          ScaleTransition(child: child, scale: animation),
+                  child: _animatedTimer,
+                ),
+              ]),
+        ),
+      ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
