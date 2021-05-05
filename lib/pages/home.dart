@@ -96,23 +96,23 @@ class _MyHomePageState extends State<MyHomePage> {
       height: MediaQuery.of(context).size.height / 2,
 
       // Ring Color for Countdown Widget.
-      color: Colors.grey[300],
+      color: Color(0xFF23213a),
 
       // Filling Color for Countdown Widget.
-      fillColor: Colors.blueGrey,
+      fillColor: Color(0xFF544de7),
 
       // Background Color for Countdown Widget.
-      backgroundColor: Colors.blueGrey[900],
+      backgroundColor: Color(0xFF232230),
 
       // Border Thickness of the Countdown Ring.
-      strokeWidth: 20.0,
+      strokeWidth: 5.0,
 
       // Begin and end contours with a flat edge and no extension.
       strokeCap: StrokeCap.round,
 
       // Text Style for Countdown Text.
       textStyle: TextStyle(
-          fontSize: 36.0, color: Colors.white, fontWeight: FontWeight.bold),
+          fontSize: 36.0, color: Colors.white),
 
       // Format for the Countdown Text.
       textFormat: CountdownTextFormat.MM_SS,
@@ -220,6 +220,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     _animatedTimer = _buildTimerUI(timerState);
+
+    Color _startStopButtonsColor = Color(0xFF664efe);
 
     return Scaffold(
       // appBar: AppBar(
@@ -359,7 +361,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: IconButton(
               icon: _startIcon,
-              color: Colors.blueGrey[900],
+              color: _startStopButtonsColor,
               onPressed: () async {
                 //START
                 if (!_isPlayDisabled && !_isPaused) {
@@ -396,7 +398,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: IconButton(
               icon: Icon(Icons.replay),
-              color: Colors.blueGrey[900],
+              color: _startStopButtonsColor,
               onPressed: () => _restart(),
             ),
           ),

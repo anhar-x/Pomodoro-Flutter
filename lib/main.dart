@@ -32,8 +32,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Pomodoro Flutter',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      theme: ThemeData.dark().copyWith(
+        backgroundColor: Color(0xFF1e1b2e),
+        scaffoldBackgroundColor:  Color(0xFF1e1b2e),
+        dividerColor: Colors.transparent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: 'Pomodoro'),

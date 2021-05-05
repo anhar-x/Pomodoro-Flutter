@@ -24,7 +24,7 @@ class _EditPageState extends State<EditPage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(25.0),
       ),
-      color: Colors.blueGrey[900],
+      color: Color(0xFF2d2c3e),
       child: Padding(
         padding: EdgeInsets.all(10.0),
         child: ExpansionTile(
@@ -116,7 +116,7 @@ class _EditPageState extends State<EditPage> {
                     alignment: Alignment.center,
                     child: Text(
                       'Edit pomodoro',
-                      style: TextStyle(color: Colors.black, fontSize: 26),
+                      style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
