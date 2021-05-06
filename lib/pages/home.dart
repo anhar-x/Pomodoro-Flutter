@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
       Icons.play_arrow); //this is changed depending on the state of the timer.
 
   CountDownController _controller = CountDownController();
-  CircularCountDownTimer _animatedTimer;
+  var _animatedTimer;
 
   _restart() async {
     // _controller.restart(duration: _stateDuration() * 60);
@@ -79,86 +79,124 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  _start() {
+    _controller.start();
+    _isPlayDisabled = true;
+    setState(() {
+      _startIcon = Icon(Icons.pause);
+    });
+    // _showIndeterminateProgressNotification();
+    _showOngoingNotification();
+  }
+
+  _resume() {
+    _controller.resume();
+    _isPaused = false;
+    setState(() {
+      _startIcon = Icon(Icons.pause);
+    });
+    // _showIndeterminateProgressNotification();
+    _showOngoingNotification();
+  }
+
+  _pause() async{
+    _controller.pause();
+    _isPaused = true;
+    setState(() {
+      _startIcon = Icon(Icons.play_arrow);
+    });
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
+
   _buildTimerUI(int key) {
-    return CircularCountDownTimer(
-      key: ValueKey(key),
-      // Countdown duration in Seconds.
-      // duration: _stateDuration() * 60,
-      duration: _stateDuration(),
-
-      // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
-      controller: _controller,
-
-      // Width of the Countdown Widget.
-      width: MediaQuery.of(context).size.width / 2,
-
-      // Height of the Countdown Widget.
-      height: MediaQuery.of(context).size.height / 2,
-
-      // Ring Color for Countdown Widget.
-      color: Color(0xFF23213a),
-
-      // Filling Color for Countdown Widget.
-      fillColor: Color(0xFF544de7),
-
-      // Background Color for Countdown Widget.
-      backgroundColor: Color(0xFF232230),
-
-      // Border Thickness of the Countdown Ring.
-      strokeWidth: 5.0,
-
-      // Begin and end contours with a flat edge and no extension.
-      strokeCap: StrokeCap.round,
-
-      // Text Style for Countdown Text.
-      textStyle: TextStyle(
-          fontSize: 36.0, color: Colors.white),
-
-      // Format for the Countdown Text.
-      textFormat: CountdownTextFormat.MM_SS,
-
-      // Handles Countdown Timer (true for Reverse Countdown (max to 0), false for Forward Countdown (0 to max)).
-      isReverse: true,
-
-      // Handles Animation Direction (true for Reverse Animation, false for Forward Animation).
-      isReverseAnimation: true,
-
-      // Handles visibility of the Countdown Text.
-      isTimerTextShown: true,
-
-      // Handles the timer start.
-      autoStart: false,
-
-      // This Callback will execute when the Countdown Starts.
-      onStart: () {
-        // Here, do whatever you want
-        _isPaused = false;
-        _isPlayDisabled = true;
+    return GestureDetector(
+      //start the timer, if the timer is showing START
+      onTap: () {
+        if (!_isPlayDisabled && !_isPaused) {
+          _start();
+        } else if (_isPaused) {
+          _resume();
+        }
       },
+      child: CircularCountDownTimer(
+        key: ValueKey(key),
+        // Countdown duration in Seconds.
+        // duration: _stateDuration() * 60,
+        duration: _stateDuration(),
 
-      // This Callback will execute when the Countdown Ends.
-      //next timer is choosen and changed here
-      onComplete: () async {
-        player.play(alarmAudioPath);
-        setState(() {
-          if (untilLongBreak > 1) {
-            if (timerState == 1) {
-              timerState = 0;
+        // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
+        controller: _controller,
+
+        // Width of the Countdown Widget.
+        width: MediaQuery.of(context).size.width / 2,
+
+        // Height of the Countdown Widget.
+        height: MediaQuery.of(context).size.height / 2,
+
+        // Ring Color for Countdown Widget.
+        color: Color(0xFF23213a),
+
+        // Filling Color for Countdown Widget.
+        fillColor: Color(0xFF544de7),
+
+        // Background Color for Countdown Widget.
+        backgroundColor: Color(0xFF232230),
+
+        // Border Thickness of the Countdown Ring.
+        strokeWidth: 5.0,
+
+        // Begin and end contours with a flat edge and no extension.
+        strokeCap: StrokeCap.round,
+
+        // Text Style for Countdown Text.
+        textStyle: TextStyle(fontSize: 36.0, color: Colors.white),
+
+        // Format for the Countdown Text.
+        textFormat: CountdownTextFormat.MM_SS,
+
+        // Handles Countdown Timer (true for Reverse Countdown (max to 0), false for Forward Countdown (0 to max)).
+        isReverse: true,
+
+        // Handles Animation Direction (true for Reverse Animation, false for Forward Animation).
+        isReverseAnimation: true,
+
+        // Handles visibility of the Countdown Text.
+        isTimerTextShown: true,
+
+        // Handles the timer start.
+        autoStart: false,
+
+        // This Callback will execute when the Countdown Starts.
+        onStart: () {
+          // Here, do whatever you want
+          _isPaused = false;
+          _isPlayDisabled = true;
+        },
+
+        // This Callback will execute when the Countdown Ends.
+        //next timer is choosen and changed here
+        onComplete: () async {
+          player.play(alarmAudioPath);
+          setState(() {
+            if (untilLongBreak > 1) {
+              if (timerState == 1) {
+                timerState = 0;
+              } else {
+                timerState = 1;
+                untilLongBreak--;
+              }
             } else {
-              timerState = 1;
-              untilLongBreak--;
+              timerState = -1;
+              untilLongBreak = prefs.getInt('until_long_break').toInt() + 1;
             }
-          } else {
-            timerState = -1;
-            untilLongBreak = prefs.getInt('until_long_break').toInt() + 1;
-          }
-          _animatedTimer = _buildTimerUI(timerState);
-          _startIcon = Icon(Icons.play_arrow);
-        });
-        _isPlayDisabled = false;
-        _isPaused = false;
-        await flutterLocalNotificationsPlugin.cancelAll();
-      },
+            _animatedTimer = _buildTimerUI(timerState);
+            _startIcon = Icon(Icons.play_arrow);
+          });
+          _isPlayDisabled = false;
+          _isPaused = false;
+          await flutterLocalNotificationsPlugin.cancelAll();
+        },
+      ),
     );
   }
 
@@ -173,28 +211,6 @@ class _MyHomePageState extends State<MyHomePage> {
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
   }
-
-  // Future<void> _showIndeterminateProgressNotification() async {
-  //   const AndroidNotificationDetails androidPlatformChannelSpecifics =
-  //       AndroidNotificationDetails(
-  //           'indeterminate progress channel',
-  //           'indeterminate progress channel',
-  //           'indeterminate progress channel description',
-  //           channelShowBadge: false,
-  //           importance: Importance.max,
-  //           priority: Priority.high,
-  //           onlyAlertOnce: true,
-  //           showProgress: true,
-  //           indeterminate: true);
-  //   const NotificationDetails platformChannelSpecifics =
-  //       NotificationDetails(android: androidPlatformChannelSpecifics);
-  //   await flutterLocalNotificationsPlugin.show(
-  //       0,
-  //       'Pomodoro',
-  //       _stateName() + ' is running!',
-  //       platformChannelSpecifics,
-  //       payload: 'item x');
-  // }
 
   Future<void> _showOngoingNotification() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -224,37 +240,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Color _startStopButtonsColor = Color(0xFF664efe);
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(widget.title),
-      //   backgroundColor: Colors.blueGrey[800],
-      //   actions: [
-      //     IconButton(
-      //       icon: Icon(Icons.menu),
-      //       onPressed: () {
-      //         //Only go to the menu if the timer is NOT running.
-      //         if (!_isPlayDisabled) {
-      //           Navigator.push(context,
-      //                   MaterialPageRoute(builder: (context) => EditPage()))
-      //               .then((value) {
-      //             setState(() {
-      //               pomodoro = prefs.getInt('pomodoro');
-      //               shortBreak = prefs.getInt('short_break');
-      //               longBreak = prefs.getInt('long_break');
-      //               untilLongBreak = prefs.getInt('until_long_break');
-      //             });
-      //             _restart(); //to update the timer with new values
-      //           });
-      //         } else {
-      //           Fluttertoast.showToast(
-      //               msg: "Timer is running!",
-      //               toastLength: Toast.LENGTH_SHORT,
-      //               gravity: ToastGravity.BOTTOM,);
-      //         }
-      //       },
-      //     ),
-      //   ],
-      // ),
-
       body: Center(
         child: GestureDetector(
           //SWIPE
@@ -365,32 +350,15 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () async {
                 //START
                 if (!_isPlayDisabled && !_isPaused) {
-                  _controller.start();
-                  _isPlayDisabled = true;
-                  setState(() {
-                    _startIcon = Icon(Icons.pause);
-                  });
-                  // _showIndeterminateProgressNotification();
-                  _showOngoingNotification();
+                  _start();
                 }
                 //PAUSE
                 else if (_isPlayDisabled && !_isPaused) {
-                  _controller.pause();
-                  _isPaused = true;
-                  setState(() {
-                    _startIcon = Icon(Icons.play_arrow);
-                  });
-                  await flutterLocalNotificationsPlugin.cancelAll();
+                  _pause();
                 }
                 //RESUME
                 else if (_isPaused) {
-                  _controller.resume();
-                  _isPaused = false;
-                  setState(() {
-                    _startIcon = Icon(Icons.pause);
-                  });
-                  // _showIndeterminateProgressNotification();
-                  _showOngoingNotification();
+                  _resume();
                 }
               },
             ),
