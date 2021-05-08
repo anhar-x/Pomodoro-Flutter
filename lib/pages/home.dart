@@ -6,7 +6,7 @@ import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wakelock/wakelock.dart';
-
+import 'package:screen/screen.dart';
 
 import '../main.dart';
 import './edit_page.dart';
@@ -22,8 +22,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  static AudioCache player = AudioCache();
-  static const alarmAudioPath = "piece-of-cake.mp3";
+  // static AudioCache player = AudioCache();
+  // static const alarmAudioPath = "piece-of-cake.mp3";
+
+  final AudioCache soundPlayer = AudioCache(prefix: 'assets/sounds/');
 
   int pomodoro = prefs.getInt('pomodoro');
   int shortBreak = prefs.getInt('short_break');
@@ -84,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  _start() async{
+  _start() async {
     _controller.start();
     Wakelock.enable();
     bool wakelockEnabled = await Wakelock.enabled;
@@ -97,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _showOngoingNotification();
   }
 
-  _resume() async{
+  _resume() async {
     _controller.resume();
     _isPaused = false;
     Wakelock.enable();
@@ -110,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _showOngoingNotification();
   }
 
-  _pause() async{
+  _pause() async {
     _controller.pause();
     _isPaused = true;
     setState(() {
@@ -187,9 +189,12 @@ class _MyHomePageState extends State<MyHomePage> {
         // This Callback will execute when the Countdown Ends.
         //next timer is choosen and changed here
         onComplete: () async {
-          player.play(alarmAudioPath);
+          // player.play(alarmAudioPath);
+
           Wakelock.disable();
           setState(() {
+            soundPlayer.play('beep.mp3');
+
             if (untilLongBreak > 1) {
               if (timerState == 1) {
                 timerState = 0;
@@ -222,6 +227,9 @@ class _MyHomePageState extends State<MyHomePage> {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
+
+    Screen.keepOn(true);
+    soundPlayer.load('beep.mp3');
   }
 
   Future<void> _showOngoingNotification() async {
