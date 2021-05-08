@@ -51,6 +51,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _controller.restart(duration: _stateDuration());
     _controller.pause();
     Wakelock.disable();
+    bool wakelockEnabled = await Wakelock.enabled;
+    print('wake locckkkkkk   $wakelockEnabled ');
     _isPaused = true;
     _isPlayDisabled = false;
     setState(() {
@@ -82,9 +84,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  _start() {
+  _start() async{
     _controller.start();
     Wakelock.enable();
+    bool wakelockEnabled = await Wakelock.enabled;
+    print('wake locckkkkkk   $wakelockEnabled ');
     _isPlayDisabled = true;
     setState(() {
       _startIcon = Icon(Icons.pause);
@@ -93,9 +97,12 @@ class _MyHomePageState extends State<MyHomePage> {
     _showOngoingNotification();
   }
 
-  _resume() {
+  _resume() async{
     _controller.resume();
     _isPaused = false;
+    Wakelock.enable();
+    bool wakelockEnabled = await Wakelock.enabled;
+    print('wake locckkkkkk   $wakelockEnabled ');
     setState(() {
       _startIcon = Icon(Icons.pause);
     });
