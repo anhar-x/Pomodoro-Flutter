@@ -47,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   CountDownController _controller = CountDownController();
   var _animatedTimer;
+  Timer _timer; //to play the alarm even when app is in background.
 
   _restart() async {
     // _controller.restart(duration: _stateDuration() * 60);
@@ -60,6 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _startIcon = Icon(Icons.play_arrow);
     });
+    _timer.cancel();
+
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
@@ -96,10 +99,17 @@ class _MyHomePageState extends State<MyHomePage> {
       _startIcon = Icon(Icons.pause);
     });
     // _showIndeterminateProgressNotification();
+    _timer = Timer.periodic(Duration(seconds: _stateDuration()), (timer) {
+      soundPlayer.play('beep.mp3');
+      print('LESSSS GOOOOOOO');
+    });
+    
+
     _showOngoingNotification();
   }
 
   _resume() async {
+
     _controller.resume();
     _isPaused = false;
     Wakelock.enable();
@@ -109,6 +119,13 @@ class _MyHomePageState extends State<MyHomePage> {
       _startIcon = Icon(Icons.pause);
     });
     // _showIndeterminateProgressNotification();
+
+    //this will not work properly everytime since duration will not always be _stateDuration() (resume might start in the middle)
+      _timer = Timer.periodic(Duration(seconds: _stateDuration()), (timer) {
+      soundPlayer.play('beep.mp3');
+    });
+    
+
     _showOngoingNotification();
   }
 
@@ -118,6 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _startIcon = Icon(Icons.play_arrow);
     });
+    _timer.cancel();
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
@@ -192,6 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // player.play(alarmAudioPath);
 
           Wakelock.disable();
+          _timer.cancel();
           setState(() {
             soundPlayer.play('beep.mp3');
 
