@@ -20,10 +20,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
-  // static AudioCache player = AudioCache();
-  // static const alarmAudioPath = "piece-of-cake.mp3";
-
+  
+  Timer _timer; //to play the alarm even when app is in background.
   final AudioCache soundPlayer = AudioCache(prefix: 'assets/sounds/');
 
   int pomodoro = prefs.getInt('pomodoro');
@@ -46,21 +44,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   CountDownController _controller = CountDownController();
   var _animatedTimer;
-  Timer _timer; //to play the alarm even when app is in background.
 
   _restart() async {
     // _controller.restart(duration: _stateDuration() * 60);
     _controller.restart(duration: _stateDuration());
     _controller.pause();
     Wakelock.disable();
-    bool wakelockEnabled = await Wakelock.enabled;
-    print('wake locckkkkkk   $wakelockEnabled ');
+    _timer.cancel();
+
     _isPaused = true;
     _isPlayDisabled = false;
     setState(() {
       _startIcon = Icon(Icons.play_arrow);
     });
-    _timer.cancel();
 
     await flutterLocalNotificationsPlugin.cancelAll();
   }
@@ -91,19 +87,14 @@ class _MyHomePageState extends State<MyHomePage> {
   _start() async {
     _controller.start();
     Wakelock.enable();
-    bool wakelockEnabled = await Wakelock.enabled;
-    print('wake locckkkkkk   $wakelockEnabled ');
     _isPlayDisabled = true;
     setState(() {
       _startIcon = Icon(Icons.pause);
     });
-    // _showIndeterminateProgressNotification();
     _timer = Timer.periodic(Duration(seconds: _stateDuration()), (timer) {
       soundPlayer.play('beep.mp3');
-      print('LESSSS GOOOOOOO');
     });
     
-
     _showOngoingNotification();
   }
 
@@ -111,16 +102,17 @@ class _MyHomePageState extends State<MyHomePage> {
     _controller.resume();
     _isPaused = false;
     Wakelock.enable();
-    bool wakelockEnabled = await Wakelock.enabled;
-    print('wake locckkkkkk   $wakelockEnabled ');
+    
     setState(() {
       _startIcon = Icon(Icons.pause);
     });
-    // _showIndeterminateProgressNotification();
+
+    //_controller.getTime() returns a string of type 01:30
+    //it is converted to seconds
+    //it is then used as duration for timer
     String _timeLeft = _controller.getTime();
     List<String> _parts = _timeLeft.split(':');
     int _inSeconds = int.parse(_parts[0])*60 + int.parse(_parts[1]);
-    print(_inSeconds);
     _timer = Timer.periodic(Duration(seconds: _inSeconds), (timer) {
       soundPlayer.play('beep.mp3');
     });
@@ -132,10 +124,11 @@ class _MyHomePageState extends State<MyHomePage> {
   _pause() async {
     _controller.pause();
     _isPaused = true;
+    _timer.cancel();
+
     setState(() {
       _startIcon = Icon(Icons.play_arrow);
     });
-    _timer.cancel();
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
@@ -207,12 +200,9 @@ class _MyHomePageState extends State<MyHomePage> {
         // This Callback will execute when the Countdown Ends.
         //next timer is choosen and changed here
         onComplete: () async {
-          // player.play(alarmAudioPath);
-
           Wakelock.disable();
-          _timer.cancel();
           setState(() {
-            soundPlayer.play('beep.mp3');
+            _timer.cancel();
 
             if (untilLongBreak > 1) {
               if (timerState == 1) {
