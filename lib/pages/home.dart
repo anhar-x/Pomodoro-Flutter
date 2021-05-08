@@ -109,7 +109,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _resume() async {
-
     _controller.resume();
     _isPaused = false;
     Wakelock.enable();
@@ -119,9 +118,11 @@ class _MyHomePageState extends State<MyHomePage> {
       _startIcon = Icon(Icons.pause);
     });
     // _showIndeterminateProgressNotification();
-
-    //this will not work properly everytime since duration will not always be _stateDuration() (resume might start in the middle)
-      _timer = Timer.periodic(Duration(seconds: _stateDuration()), (timer) {
+    String _timeLeft = _controller.getTime();
+    List<String> _parts = _timeLeft.split(':');
+    int _inSeconds = int.parse(_parts[0])*60 + int.parse(_parts[1]);
+    print(_inSeconds);
+    _timer = Timer.periodic(Duration(seconds: _inSeconds), (timer) {
       soundPlayer.play('beep.mp3');
     });
     
