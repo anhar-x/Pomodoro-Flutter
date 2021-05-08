@@ -5,6 +5,8 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:wakelock/wakelock.dart';
+
 
 import '../main.dart';
 import './edit_page.dart';
@@ -48,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // _controller.restart(duration: _stateDuration() * 60);
     _controller.restart(duration: _stateDuration());
     _controller.pause();
+    Wakelock.disable();
     _isPaused = true;
     _isPlayDisabled = false;
     setState(() {
@@ -81,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _start() {
     _controller.start();
+    Wakelock.enable();
     _isPlayDisabled = true;
     setState(() {
       _startIcon = Icon(Icons.pause);
@@ -177,6 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
         //next timer is choosen and changed here
         onComplete: () async {
           player.play(alarmAudioPath);
+          Wakelock.disable();
           setState(() {
             if (untilLongBreak > 1) {
               if (timerState == 1) {
