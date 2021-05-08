@@ -6,7 +6,6 @@ import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:screen/screen.dart';
 
 import '../main.dart';
 import './edit_page.dart';
@@ -248,7 +247,6 @@ class _MyHomePageState extends State<MyHomePage> {
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
 
-    Screen.keepOn(true);
     soundPlayer.load('beep.mp3');
   }
 
