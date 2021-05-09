@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   _restart() async {
     // _controller.restart(duration: _stateDuration() * 60);
     _controller.restart(duration: _stateDuration());
-    _controller.pause();//timer will automiatically start without this.
+    _controller.pause(); //timer will automiatically start without this.
     Wakelock.disable();
     _timer.cancel();
 
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  _start(){
+  _start() {
     _controller.start();
     Wakelock.enable();
 
@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _showOngoingNotification();
   }
 
-  _resume(){
+  _resume() {
     _controller.resume();
     Wakelock.enable();
 
@@ -228,6 +228,9 @@ class _MyHomePageState extends State<MyHomePage> {
           _isPlayDisabled = false;
           _isPaused = false;
           await flutterLocalNotificationsPlugin.cancelAll();
+
+          //timer is completed notification
+          _showTimerCompletedNotification();
         },
       ),
     );
@@ -262,6 +265,19 @@ class _MyHomePageState extends State<MyHomePage> {
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'Pomodoro', _stateName() + ' is running!', platformChannelSpecifics);
+  }
+
+  Future<void> _showTimerCompletedNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'Pomodoro', 'Completed Session', 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Completed!', _stateName() + ' is completed!', platformChannelSpecifics);
   }
 
   Future onSelectNotification(String payload) async {
