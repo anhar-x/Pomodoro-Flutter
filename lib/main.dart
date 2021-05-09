@@ -11,6 +11,8 @@ void main() async{
   prefs = await SharedPreferences.getInstance();
 
   runApp(MyApp());
+
+  //Default values are set here.
   if(prefs.getInt('pomodoro') == null){
     await prefs.setInt('pomodoro', 10);
   }
@@ -38,7 +40,7 @@ class MyApp extends StatelessWidget {
         dividerColor: Colors.transparent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Pomodoro'),
+      home: MyHomePage(),
     );
   }
 }

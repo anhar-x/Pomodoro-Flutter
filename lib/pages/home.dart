@@ -11,16 +11,13 @@ import '../main.dart';
 import './edit_page.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  
+
   Timer _timer; //to play the alarm even when app is in background.
   final AudioCache soundPlayer = AudioCache(prefix: 'assets/sounds/');
 
@@ -72,7 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  //this is BAD code or is it?
   //returns the name of the state for a given timerState.
   _stateName() {
     if (timerState == 1) {
@@ -84,25 +80,24 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  _start() async {
+  _start(){
     _controller.start();
     Wakelock.enable();
-    _isPlayDisabled = true;
+
     setState(() {
       _startIcon = Icon(Icons.pause);
     });
     _timer = Timer.periodic(Duration(seconds: _stateDuration()), (timer) {
       soundPlayer.play('beep.mp3');
     });
-    
+
     _showOngoingNotification();
   }
 
-  _resume() async {
+  _resume(){
     _controller.resume();
-    _isPaused = false;
     Wakelock.enable();
-    
+
     setState(() {
       _startIcon = Icon(Icons.pause);
     });
@@ -112,19 +107,19 @@ class _MyHomePageState extends State<MyHomePage> {
     //it is then used as duration for timer
     String _timeLeft = _controller.getTime();
     List<String> _parts = _timeLeft.split(':');
-    int _inSeconds = int.parse(_parts[0])*60 + int.parse(_parts[1]);
+    int _inSeconds = int.parse(_parts[0]) * 60 + int.parse(_parts[1]);
     _timer = Timer.periodic(Duration(seconds: _inSeconds), (timer) {
       soundPlayer.play('beep.mp3');
     });
-    
 
     _showOngoingNotification();
   }
 
   _pause() async {
     _controller.pause();
-    _isPaused = true;
     _timer.cancel();
+
+    _isPaused = true;
 
     setState(() {
       _startIcon = Icon(Icons.play_arrow);
@@ -134,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _buildTimerUI(int key) {
     return GestureDetector(
-      //start the timer, if the timer is showing START
+      //start the timer, when tapped on the timer UI
       onTap: () {
         if (!_isPlayDisabled && !_isPaused) {
           _start();
@@ -192,9 +187,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
         // This Callback will execute when the Countdown Starts.
         onStart: () {
-          // Here, do whatever you want
-          _isPaused = false;
           _isPlayDisabled = true;
+          _isPaused = false;
         },
 
         // This Callback will execute when the Countdown Ends.
@@ -273,7 +267,6 @@ class _MyHomePageState extends State<MyHomePage> {
           //SWIPE
           onHorizontalDragEnd: (dragEndDetails) {
             if (!_isPlayDisabled || _isPaused) {
-              print('ITS WORKINGGGGGG');
               if (dragEndDetails.primaryVelocity < 0) {
                 //forwards
                 setState(() {
@@ -305,7 +298,6 @@ class _MyHomePageState extends State<MyHomePage> {
               _isPlayDisabled = false;
               _isPaused = false;
             } else {
-              print('DISABLEDDDDDDDD');
               return;
             }
           },
