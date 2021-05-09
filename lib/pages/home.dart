@@ -97,6 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     _timer = Timer.periodic(Duration(seconds: _stateDuration()), (timer) {
       soundPlayer.play('beep.mp3');
+      _showTimerCompletedNotification();
+
       _timer.cancel();
     });
 
@@ -121,6 +123,8 @@ class _MyHomePageState extends State<MyHomePage> {
     int _inSeconds = int.parse(_parts[0]) * 60 + int.parse(_parts[1]);
     _timer = Timer.periodic(Duration(seconds: _inSeconds), (timer) {
       soundPlayer.play('beep.mp3');
+      _showTimerCompletedNotification();
+
       _timer.cancel();
     });
 
@@ -228,9 +232,6 @@ class _MyHomePageState extends State<MyHomePage> {
           _isPlayDisabled = false;
           _isPaused = false;
           await flutterLocalNotificationsPlugin.cancelAll();
-
-          //timer is completed notification
-          _showTimerCompletedNotification();
         },
       ),
     );
@@ -264,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, 'Pomodoro', _stateName() + ' is running!', platformChannelSpecifics);
+        0, _stateName() , 'is running!', platformChannelSpecifics);
   }
 
   Future<void> _showTimerCompletedNotification() async {
@@ -277,7 +278,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, 'Completed!', _stateName() + ' is completed!', platformChannelSpecifics);
+        0, 'Well Done!', _stateName() + ' completed', platformChannelSpecifics);
   }
 
   Future onSelectNotification(String payload) async {
