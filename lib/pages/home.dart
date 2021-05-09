@@ -36,21 +36,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _isPlayDisabled = false; //true when the timer is running.
   bool _isPaused = false; //true when the timer is paused.
+
   Icon _startIcon = Icon(
       Icons.play_arrow); //this is changed depending on the state of the timer.
 
   CountDownController _controller = CountDownController();
   var _animatedTimer;
 
+  //swiping should not change the timer type when the timer is paused in the middle
+  //_pausedInTheMiddle will be true when the user has paused while the timer was running
+  //this is needed because _isPaused will be true when _restart() is called but swiping is allowed when the timer is restarted
+  bool _pausedInTheMiddle = false;
+
   _restart() async {
     // _controller.restart(duration: _stateDuration() * 60);
     _controller.restart(duration: _stateDuration());
-    _controller.pause();
+    _controller.pause();//timer will automiatically start without this.
     Wakelock.disable();
     _timer.cancel();
 
     _isPaused = true;
     _isPlayDisabled = false;
+    _pausedInTheMiddle = false;
+
     setState(() {
       _startIcon = Icon(Icons.play_arrow);
     });
@@ -89,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     _timer = Timer.periodic(Duration(seconds: _stateDuration()), (timer) {
       soundPlayer.play('beep.mp3');
+      _timer.cancel();
     });
 
     _showOngoingNotification();
@@ -97,6 +106,8 @@ class _MyHomePageState extends State<MyHomePage> {
   _resume(){
     _controller.resume();
     Wakelock.enable();
+
+    _pausedInTheMiddle = false;
 
     setState(() {
       _startIcon = Icon(Icons.pause);
@@ -110,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
     int _inSeconds = int.parse(_parts[0]) * 60 + int.parse(_parts[1]);
     _timer = Timer.periodic(Duration(seconds: _inSeconds), (timer) {
       soundPlayer.play('beep.mp3');
+      _timer.cancel();
     });
 
     _showOngoingNotification();
@@ -120,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _timer.cancel();
 
     _isPaused = true;
+    _pausedInTheMiddle = true;
 
     setState(() {
       _startIcon = Icon(Icons.play_arrow);
@@ -266,7 +279,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: GestureDetector(
           //SWIPE
           onHorizontalDragEnd: (dragEndDetails) {
-            if (!_isPlayDisabled || _isPaused) {
+            if (!_isPlayDisabled && !_pausedInTheMiddle) {
+              _timer.cancel();
               if (dragEndDetails.primaryVelocity < 0) {
                 //forwards
                 setState(() {
