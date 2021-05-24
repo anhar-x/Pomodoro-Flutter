@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pages/home.dart'; 
+import 'pages/intro_page.dart';
 
 SharedPreferences prefs;
 
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
         dividerColor: Colors.transparent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(),
+      home: prefs.getBool('first_time') == null ? IntroPage() : MyHomePage(),
     );
   }
 }
