@@ -41,7 +41,8 @@ class MyApp extends StatelessWidget {
         dividerColor: Colors.transparent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: prefs.getBool('first_time') == null ? IntroPage() : MyHomePage(),
+      // home: prefs.getBool('first_time') == null ? IntroPage() : MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }

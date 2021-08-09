@@ -11,9 +11,11 @@ class IntroPage extends StatelessWidget {
         child: ElevatedButton(
           child: Text('press'),
           onPressed: () {
-            prefs.setBool('first_time', false);
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => MyHomePage()));
+            
+           
+            // // prefs.setBool('first_time', false);
+            // Navigator.pushReplacement(
+            //     context, MaterialPageRoute(builder: (context) => MyHomePage()));
           },
         ),
       ),
